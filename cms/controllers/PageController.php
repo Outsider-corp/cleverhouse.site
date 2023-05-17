@@ -22,84 +22,85 @@ class PageController extends Controller
     public function actionListproducts()
     {
 
-        if(isset($_GET['id']) && $_GET['id'] != "" && filter_var($_GET['id'], FILTER_VALIDATE_INT))
-        {
-            // id категории
-            $id = $_GET['id'];
+//        if(isset($_GET['id']) && $_GET['id'] != "" && filter_var($_GET['id'], FILTER_VALIDATE_INT))
+//        {
+//            // id категории
+//            $id = $_GET['id'];
+//
+//            $categories = Categories::find()->where(['id' => $id])->asArray()->one();
+//
+//
+//
+//            if(count($categories) > 0)
+//            {
+//                $model = new SortForm();
+//
+//
+//                $count_products = count(Products::find()->where(['category' => $id])->asArray()->all());
+//
+//                $page = 1; // номер страницы
+//                $str = null; // сортировка
+//                $number = 12; // количество товаров на странице
+//
+//                if(isset($_GET['page']) && $_GET['page'] != "" && filter_var($_GET['page'], FILTER_VALIDATE_INT))
+//                {
+//                    $page = $_GET['page'];
+//                }
+//
+//                // Обработчик для формы сортировки
+//                if($model->load(Yii::$app->request->post()) && $model->validate())
+//                {
+//                    if(isset($model->number) && !empty($model->number)){
+//                        $number = $model->number;
+//                    }
+//
+//                    if(isset($model->str)){
+//
+//                        switch($model->str){
+//                            case 0:
+//                                $products_array = $this->selectListProd($id, ['price'=> SORT_ASC], $number, $page);
+//                                break;
+//                            case 1:
+//                                $products_array = $this->selectListProd($id, ['price'=> SORT_DESC], $number, $page);
+//                                break;
+//                            case 2:
+//                                $products_array = $this->selectListProd($id, ['name'=> SORT_ASC], $number, $page);
+//                                break;
+//                            case 3:
+//                                $products_array = $this->selectListProd($id, ['name'=> SORT_DESC], $number, $page);
+//                                break;
+//                            default:
+//                                $products_array = $this->selectListProd($id, ['id'=> SORT_ASC], $number, $page);
+//                                break;
+//
+//                        }
+//                    }
+//                    else{
+//                        $products_array = $this->selectListProd($id, ['id'=> SORT_ASC], $number, $page);
+//                    }
+//                }
+//                else{
+//                    $products_array = $this->selectListProd($id, ['id'=> SORT_ASC], $number, $page);
+//                }
+//
+//                // количество страниц для пагинации
+//                $count_pages = ceil($count_products / $number);
+//
+//
+//                if(isset($_GET['view']) && $_GET['view'] == 1)
+//                    $view = 1;
+//                else
+//                    $view = 0;
 
-            $categories = Categories::find()->where(['id' => $id])->asArray()->one();
+            	return $this->render('listproducts');
+//            	return $this->render('listproducts', compact('categories', 'products_array', 'count_products', 'view', 'model', 'count_pages', 'id'));
 
-
-
-            if(count($categories) > 0)  
-            {
-                $model = new SortForm();
-
-
-                $count_products = count(Products::find()->where(['category' => $id])->asArray()->all());
-
-                $page = 1; // номер страницы
-                $str = null; // сортировка
-                $number = 12; // количество товаров на странице
-
-                if(isset($_GET['page']) && $_GET['page'] != "" && filter_var($_GET['page'], FILTER_VALIDATE_INT))
-                {
-                    $page = $_GET['page'];
-                }
-
-                // Обработчик для формы сортировки
-                if($model->load(Yii::$app->request->post()) && $model->validate())
-                {
-                    if(isset($model->number) && !empty($model->number)){
-                        $number = $model->number;
-                    }
-
-                    if(isset($model->str)){
-
-                        switch($model->str){
-                            case 0:
-                                $products_array = $this->selectListProd($id, ['price'=> SORT_ASC], $number, $page);
-                                break;
-                            case 1:
-                                $products_array = $this->selectListProd($id, ['price'=> SORT_DESC], $number, $page);
-                                break;
-                            case 2:
-                                $products_array = $this->selectListProd($id, ['name'=> SORT_ASC], $number, $page);
-                                break;
-                            case 3:
-                                $products_array = $this->selectListProd($id, ['name'=> SORT_DESC], $number, $page);
-                                break;
-                            default:
-                                $products_array = $this->selectListProd($id, ['id'=> SORT_ASC], $number, $page);
-                                break;
-
-                        }
-                    }
-                    else{
-                        $products_array = $this->selectListProd($id, ['id'=> SORT_ASC], $number, $page);
-                    }
-                }
-                else{
-                    $products_array = $this->selectListProd($id, ['id'=> SORT_ASC], $number, $page);
-                }
-
-                // количество страниц для пагинации
-                $count_pages = ceil($count_products / $number);
-
-
-                if(isset($_GET['view']) && $_GET['view'] == 1)
-                    $view = 1; 
-                else
-                    $view = 0; 
-
-            	return $this->render('listproducts', compact('categories', 'products_array', 'count_products', 'view', 'model', 'count_pages', 'id'));
-            }	
                 
 
 
-        }
 
-        return $this->redirect(['page/catalog']);
+
+//        return $this->redirect(['page/catalog']);
 
 
     }
@@ -118,7 +119,8 @@ class PageController extends Controller
      */
     public function actionCatalog()
     {
-        $categories = Categories::find()->asArray()->all();
+//        $categories = Categories::find()->asArray()->all();
+        $categories = 1;
 
         return $this->render('catalog', compact('categories'));
     }

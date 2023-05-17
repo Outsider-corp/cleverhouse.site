@@ -889,6 +889,12 @@ header{
 .filter button:hover{
 	opacity: 0.9;
 }
+
+.catalog p{
+	text-align: center;
+
+}
+
 .catalog a:last-child{
 	text-align: center;
 	background-color: #333;
@@ -1098,7 +1104,7 @@ header{
 	.menu_top li a::before{
 		display: none;
 	}
-	.menu_top li a:hover, {
+	.menu_top li a:hover{
 		color:#ff5b23;
 	}
 	.menu_top .navbar-toggle.active:hover .icon-bar {
