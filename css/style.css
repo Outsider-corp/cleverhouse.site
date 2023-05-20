@@ -565,7 +565,7 @@ header{
 	.menu_top li a::before{
 		display: none;
 	}
-	.menu_top li a:hover, {
+	.menu_top li a:hover{
 		color:#ff5b23;
 	}
 	.menu_top .navbar-toggle.active:hover .icon-bar {

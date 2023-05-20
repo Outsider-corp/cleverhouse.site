@@ -892,28 +892,31 @@ header{
 
 .catalog p{
 	text-align: center;
-
 }
 
 .catalog a:last-child{
 	text-align: center;
 	background-color: #333;
+	position: relative;
 	display: block;
 	padding:10px 0;
 	color:#fff;
-	position: relative;
 	z-index: 1;
 }
-.catalog .catalog_category{
-	margin-bottom:20px;
+.catalog .catalog_category {
+	margin-bottom: 20px;
 }
+
 .catalog .catalog_category img{
 	-webkit-transition: all 1s ease;
 	-moz-transition: all 1s ease;
 	-ms-transition: all 1s ease;
 	-o-transition: all 1s ease;
 	transition: all 1s ease;
+	height: 250px;
+	width: 250px;
 }
+
 .catalog .catalog_category:hover img{
 	transform: scale(1.1);
 }
