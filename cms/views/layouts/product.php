@@ -80,8 +80,6 @@ ProdAsset::register($this);
                    
                     ?>
 
-
-             
           </div>
         </div>
       </div>
@@ -92,9 +90,8 @@ ProdAsset::register($this);
             <div class="col-lg-12 contant_wrap">
                 <div class="navigation">
                     <ul>
-                        <li><a href="#"><i class="glyphicon glyphicon-home"></i></a></li>
-                        <li><a href="#">Снаряжение</a></li>
-                        <li><span>Рюкзаки</span></li>
+                        <li><a href="<?=Url::toRoute(['site/index']);?>"><i class="glyphicon glyphicon-home"></i></a></li>
+                        <li><a href="<?=Url::toRoute(['site/index']);?>">Системы умного дома</a></li>
                     </ul>
                 </div>
             </div>
@@ -108,8 +105,6 @@ ProdAsset::register($this);
 
                 </div>
             </div>
-
-
 
         </div>
     </div>

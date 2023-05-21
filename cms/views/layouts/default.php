@@ -2,6 +2,7 @@
 
 /* @var $this \yii\web\View */
 /* @var $content string */
+/* @var $category string */
 
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
@@ -58,7 +59,6 @@ DefaultAsset::register($this);
       <div class="container-fluid menu_top">
         <div class="container">
           <div class="row">
-
                 <?php
 
                     NavBar::begin([
@@ -79,22 +79,17 @@ DefaultAsset::register($this);
                     NavBar::end();
                    
                     ?>
-
-
-             
           </div>
         </div>
       </div>
     </header>
-
     <div class="container">
         <div class="row">
             <div class="col-lg-12 contant_wrap">
                 <div class="navigation">
                     <ul>
-                        <li><a href="#"><i class="glyphicon glyphicon-home"></i></a></li>
-                        <li><a href="#">Снаряжение</a></li>
-                        <li><span>Рюкзаки</span></li>
+                        <li><a href="<?=Url::toRoute(['site/index']);?>"><i class="glyphicon glyphicon-home"></i></a></li>
+                        <li><a href="<?=Url::toRoute(['site/index']);?>">Системы умного дома</a></li>
                     </ul>
                 </div>
             </div>

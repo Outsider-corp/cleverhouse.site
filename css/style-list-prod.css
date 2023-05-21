@@ -5,7 +5,7 @@
 header{
 	display: block;
 	width:100%;
-	background: url("../images/header_fon.jpg") no-repeat 50% 0;
+	background: url("../images/Фон.png") no-repeat 50% 0;
 	overflow: hidden;
     position: relative;
 }
@@ -13,7 +13,7 @@ header{
 	margin:50px 0 40px;
 }
 .menu_top{
-	background: url("../images/fon_top_menu.png") no-repeat 50% 0;
+	background: url("../images/fon_top_menu.png") no-repeat 25% 0;
 }
 .logo img{
 	display: block;
@@ -603,14 +603,13 @@ header{
 	margin-left: 5px;
 }
 
-
-
-
 /*Карточка товара*/
-.page_prod .img_prod{
+.img_prod img{
 	text-align: center;
 	padding:20px 0;
 	border: 1px solid #eaeaea;
+	height: 250px;
+	width: 250px;
 }
 .h_prod{
 	margin:30px 0 20px;

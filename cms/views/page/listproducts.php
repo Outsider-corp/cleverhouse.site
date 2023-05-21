@@ -6,11 +6,10 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 
-$this->title = "Интеренет-магазин | Категория";
-//  $this->title = "Интеренет-магазин | ".$categories['name'];
+  $this->title = "Интеренет-магазин | ".$categories['name_category'];
 
-$this->registerMetaTag(['name' => 'keywords', 'content' => 'снаряжение, туризм, рюкзаки']);
-$this->registerMetaTag(['name' => 'description', 'content' => 'снаряжение для туризма']);
+$this->registerMetaTag(['name' => 'keywords', 'content' => 'техника, умный дом, интернет вещей']);
+$this->registerMetaTag(['name' => 'description', 'content' => 'системы умного дома']);
 
 ?>
 
@@ -59,7 +58,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
             <div class="row">
                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 sortirovka_and_number_prod">
 
-                    <?php $form = ActiveForm::begin(); ?>
+                    <?php $form = ActiveForm::begin(['action' => ['page/listproducts', 'id' => $categories['id'], 'view' => $view]]); ?>
                     <p><strong>Сортировка по:</strong><?= $form->field($model, 'str')->dropDownList([
                             '0' => 'Цене, по возрастанию',
                             '1' => 'Цене, по убыванию',
@@ -67,11 +66,12 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
                             '3' => 'Названию товара, от Я до А'],
                             $params = [
                                 'prompt' => '--',
+                                'options' => [$str => ["Selected" => true]],
                             ]
                         ); ?></p>
                     <p><strong>Показать:</strong>
                         <?= $form->field($model, 'number')->dropDownList(['3' => '3', '12' => '12', '24' => '24', '48' => '48'], $params = [
-                            'options' => ['12' => ['Selected' => true]],
+                            'options' => [$number => ['Selected' => true]],
                         ]
                         ); ?></p>
                     <?= Html::submitButton('Go'); ?>
@@ -88,12 +88,12 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
                         ?>
 
                         <a href="
-        <?= Url::toRoute(['page/listproducts', 'id' => $categories['id']]); ?>" class="
+        <?= Url::toRoute(['page/listproducts', 'id' => $categories['id'], 'str' => $str, 'number' => $number]); ?>"
+                           class="
         <?= $class1; ?>"><i class="glyphicon glyphicon-th"></i><span>Сетка</span></a>
-
-
                         <a href="
-        <?= Url::toRoute(['page/listproducts', 'id' => $categories['id'], 'view' => '1']); ?>" class="
+        <?= Url::toRoute(['page/listproducts', 'id' => $categories['id'], 'view' => '1', 'str' => $str, 'number' => $number]); ?>"
+                           class="
         <?= $class2; ?>"><i class="glyphicon glyphicon-th-list"></i><span>Список</span></a>
 
                     </p>
@@ -110,7 +110,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 view_list">
                     <div class="product">
                         <a href="<?= Url::toRoute(['page/product', 'id' => $product_array['id']]);
-                        ?>" class="product_img">-->
+                        ?>" class="product_img">
                             <?php if ($product_array['price_old'] != ""):
                                 ?>
                                 <span>-<?php echo 100 - intval($product_array['price'] * 100 / $product_array['price_old']);
@@ -123,14 +123,14 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
                         <div class="desc">
                             <a href="
                     <?= Url::toRoute(['page/product', 'id' => $product_array['id']]);
-                            ?>" class="product_title"><?php $product_array['name_product'];
+                            ?>" class="product_title"><?= $product_array['name_product'];
                                 ?></a>
                             <div class="product_price">
-                                            <span class="price"><?= $product_array['price']
+                                            <span class="price"><?= number_format($product_array['price'], 0, '', ' ')
                                                 ?> руб</span>
                                 <?php if ($product_array['price_old'] != ""):
                                     ?>
-                                    <span class="price_old"><?= $product_array['price_old']
+                                    <span class="price_old"><?= number_format($product_array['price_old'], 0, '', ' ')
                                         ?> руб</span>
                                 <?php endif;
                                 ?>
@@ -181,9 +181,12 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
                             <a href="<?= Url::toRoute(['page/product', 'id' => $product_array['id']]); ?>"
                                class="product_title"><?= $product_array['name_product']; ?></a>
                             <div class="product_price">
-                                <span class="price"><?= $product_array['price'] ?> руб</span>
+                                <span class="price"><?=
+                                    number_format($product_array['price'], 0, '',
+                                        ' ') ?> руб</span>
                                 <?php if ($product_array['price_old'] != ""): ?>
-                                    <span class="price_old"><?= $product_array['price_old'] ?> руб</span>
+                                    <span class="price_old"><?=
+                                        number_format($product_array['price_old'], 0, '', ' ') ?> руб</span>
                                 <?php endif; ?>
                             </div>
                             <div class="product_btn">
@@ -203,53 +206,43 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
     </div>
 
     <div class="row pagination">
-        <!---->
-        <!--      --><?php
-        //        if(isset($count_pages) && $count_pages > 1) {
-        //
+
+        <?php
+        if (isset($_GET['number']))
+            $number = $_GET['number'];
+        if (isset($_GET['str']))
+            $str = $_GET['str'];
+        if (isset($count_pages) && $count_pages > 1) {
+
+            ?>
+            <ul>
+                <?php
+                for ($i = 1; $i <= $count_pages; $i++) {
+                    if ((!isset($_GET['page']) && $i == 1) || $_GET['page'] == $i) {
+                        ?>
+                        <li class="active"><span><?php echo $i;
+                                ?></span></li>
+                    <?php } else {
+                        if (isset($_GET['view']) && $_GET['view'] == 1) {
+                            ?>
+                            <li><a href="
+        <?= Url::toRoute(['page/listproducts', 'id' => $id, 'page' => $i, 'view' => 1, 'number' => $number, 'str' => $str]);
+                                ?>">
+                                    <?php echo $i;
+                                    ?></a></li>
+                        <?php } else {
+                            ?>
+                            <li><a href="
+        <?= Url::toRoute(['page/listproducts', 'id' => $id, 'page' => $i, 'number' => $number, 'str' => $str]);
+                                ?>">
+                                    <?php echo $i;
+                                    ?></a></li>
+                        <?php }
+                    }
+                }
+                ?>
+            </ul>
+            <?php
+        }
         ?>
-        <!--          <ul>-->
-        <!--            --><?php
-        //              for($i = 1; $i <= $count_pages; $i++) {
-        //
-        ?>
-        <!--              --><?php
-        //                if((!isset($_GET['page']) && $i == 1) || $_GET['page'] == $i){
-        ?>
-        <!---->
-        <!--                  <li class="active"><span>--><?php //echo $i;
-        ?><!--</span></li>-->
-        <!--                --><?php //}else{
-        ?>
-        <!---->
-        <!--                    --><?php //if(isset($_GET['view']) && $_GET['view'] == 1){
-        ?>
-        <!--                      <li><a href="-->
-        <?php //=Url::toRoute(['page/listproducts', 'id' => $id, 'page' => $i, 'view' => 1]);
-        ?><!--">-->
-        <?php //echo $i;
-        ?><!--</a></li>-->
-        <!--                    --><?php //}else{
-        ?>
-        <!--                      <li><a href="-->
-        <?php //=Url::toRoute(['page/listproducts', 'id' => $id, 'page' => $i]);
-        ?><!--">-->
-        <?php //echo $i;
-        ?><!--</a></li>-->
-        <!---->
-        <!--                    --><?php //}
-        ?>
-        <!---->
-        <!--                --><?php //}
-        ?>
-        <!--            --><?php
-        //              }
-        //
-        ?>
-        <!--          </ul>-->
-        <!--      --><?php
-        //        }
-        //
-        ?>
-        <!--    </div>-->
     </div>

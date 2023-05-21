@@ -607,10 +607,12 @@ header{
 
 
 /*Карточка товара*/
-.page_prod .img_prod{
+.img_prod img{
 	text-align: center;
 	padding:20px 0;
 	border: 1px solid #eaeaea;
+	height: 350px;
+	width: 350px;
 }
 .h_prod{
 	margin:30px 0 20px;
@@ -1064,7 +1066,7 @@ a.disabled:hover {
 	.menu_top li a::before{
 		display: none;
 	}
-	.menu_top li a:hover, {
+	.menu_top li a:hover{
 		color:#ff5b23;
 	}
 	.menu_top .navbar-toggle.active:hover .icon-bar {

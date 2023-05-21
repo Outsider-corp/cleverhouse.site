@@ -22,13 +22,11 @@ class PageController extends Controller
      */
     public function actionListproducts()
     {
-
         if (isset($_GET['id']) && $_GET['id'] != "" && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
             $id = $_GET['id'];
-            $categories = Categories::find()->where(['id'=> $id])->asArray()->one();
+            $categories = Categories::find()->where(['id' => $id])->asArray()->one();
 
             if (count($categories) > 0) {
-//                $products_array = Products::find()->where(['id_category'=>$_GET['id']])->asArray()->all();
                 $model = new SortForm();
 
 
@@ -41,59 +39,56 @@ class PageController extends Controller
                 if (isset($_GET['page']) && $_GET['page'] != "" && filter_var($_GET['page'], FILTER_VALIDATE_INT)) {
                     $page = $_GET['page'];
                 }
+                if (isset($_GET['str'])) {
+                    $str = $_GET['str'];
+                }
+                if (isset($_GET['number']) && $_GET['number'] != "" && filter_var($_GET['number'], FILTER_VALIDATE_INT)) {
+                    $number = $_GET['number'];
+                }
 
                 // Обработчик для формы сортировки
                 if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                     if (isset($model->number) && !empty($model->number)) {
                         $number = $model->number;
                     }
-
                     if (isset($model->str)) {
-
-                        switch ($model->str) {
-                            case 0:
-                                $products_array = $this->selectListProd($id, ['price' => SORT_ASC], $number, $page);
-                                break;
-                            case 1:
-                                $products_array = $this->selectListProd($id, ['price' => SORT_DESC], $number, $page);
-                                break;
-                            case 2:
-                                $products_array = $this->selectListProd($id, ['name_product' => SORT_ASC], $number, $page);
-                                break;
-                            case 3:
-                                $products_array = $this->selectListProd($id, ['name_product' => SORT_DESC], $number, $page);
-                                break;
-                            default:
-                                $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page);
-                                break;
-
-                        }
-                    } else {
-                        $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page);
+                        $str = $model->str;
                     }
-                } else {
-                    $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page);
                 }
-
-                // количество страниц для пагинации
-                $count_pages = ceil($count_products / $number);
-
-
-                if (isset($_GET['view']) && $_GET['view'] == 1)
-                    $view = 1;
-                else
-                    $view = 0;
+                switch ($str) {
+                    case 0:
+                        $products_array = $this->selectListProd($id, ['price' => SORT_ASC], $number, $page);
+                        break;
+                    case 1:
+                        $products_array = $this->selectListProd($id, ['price' => SORT_DESC], $number, $page);
+                        break;
+                    case 2:
+                        $products_array = $this->selectListProd($id, ['name_product' => SORT_ASC], $number, $page);
+                        break;
+                    case 3:
+                        $products_array = $this->selectListProd($id, ['name_product' => SORT_DESC], $number, $page);
+                        break;
+                    default:
+                        $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page);
+                        break;
+                }
             }
-                return $this->render('listproducts', compact('categories', 'products_array', 'count_products', 'view', 'model', 'id'));
-//                return $this->render('listproducts', compact('categories', 'products_array', 'count_products'));
-            }
 
+            // количество страниц для пагинации
+            $count_pages = ceil($count_products / $number);
+
+            if (isset($_GET['view']) && $_GET['view'] == 1)
+                $view = 1;
+            else
+                $view = 0;
+            return $this->render('listproducts', compact('categories', 'products_array',
+                'count_products', 'view', 'model', 'count_pages', 'id', 'number', 'str'));
+        }
         return $this->redirect(['page/catalog']);
-
-
     }
 
-    private function selectListProd($id, $field_sort, $limit, $start)
+    private
+    function selectListProd($id, $field_sort, $limit, $start)
     {
         if ($start == 1)
             $start = 0;
@@ -106,7 +101,8 @@ class PageController extends Controller
     /**
      * Для страницы каталога
      */
-    public function actionCatalog()
+    public
+    function actionCatalog()
     {
         $categories = Categories::find()->asArray()->all();
 
@@ -117,7 +113,8 @@ class PageController extends Controller
     /**
      * Для страницы каталога
      */
-    public function actionProduct()
+    public
+    function actionProduct()
     {
         $this->layout = "product";
 
@@ -139,7 +136,8 @@ class PageController extends Controller
     /**
      * Для страницы новостей
      */
-    public function actionNews()
+    public
+    function actionNews()
     {
         return $this->render('news');
     }
@@ -147,7 +145,8 @@ class PageController extends Controller
     /**
      * Для страницы контакты
      */
-    public function actionContacts()
+    public
+    function actionContacts()
     {
         return $this->render('contacts');
     }
@@ -155,7 +154,8 @@ class PageController extends Controller
     /**
      * Для страницы входа
      */
-    public function actionLogin()
+    public
+    function actionLogin()
     {
         return $this->render('login');
     }
@@ -163,7 +163,8 @@ class PageController extends Controller
     /**
      * Для страницы регистрации
      */
-    public function actionRegistration()
+    public
+    function actionRegistration()
     {
         return $this->render('registration');
     }
@@ -171,7 +172,8 @@ class PageController extends Controller
     /**
      * Для страницы обратная связь
      */
-    public function actionFormcontact()
+    public
+    function actionFormcontact()
     {
         return $this->render('formcontact');
     }
@@ -179,7 +181,8 @@ class PageController extends Controller
     /**
      * Для страницы личный кабинет
      */
-    public function actionLk()
+    public
+    function actionLk()
     {
         return $this->render('lk');
     }
@@ -187,7 +190,8 @@ class PageController extends Controller
     /**
      * Для страницы Доставка
      */
-    public function actionDostavka()
+    public
+    function actionDostavka()
     {
         return $this->render('dostavka');
     }
@@ -195,7 +199,8 @@ class PageController extends Controller
     /**
      * Для страницы Оплата
      */
-    public function actionOplata()
+    public
+    function actionOplata()
     {
         return $this->render('oplata');
     }
@@ -203,7 +208,8 @@ class PageController extends Controller
     /**
      * Для страницы О компании
      */
-    public function actionAbout()
+    public
+    function actionAbout()
     {
         return $this->render('about');
     }
@@ -211,7 +217,8 @@ class PageController extends Controller
     /**
      * Для страницы Скидки
      */
-    public function actionSale()
+    public
+    function actionSale()
     {
         return $this->render('sale');
     }
@@ -219,7 +226,8 @@ class PageController extends Controller
     /**
      * Для страницы Карта сайта
      */
-    public function actionSitemap()
+    public
+    function actionSitemap()
     {
         return $this->render('sitemap');
     }
@@ -227,7 +235,8 @@ class PageController extends Controller
     /**
      * Для страницы корзина
      */
-    public function actionCart()
+    public
+    function actionCart()
     {
         $session = Yii::$app->session;
 //        $session->destroy();
@@ -244,13 +253,11 @@ class PageController extends Controller
             $productsArray = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
 
             if (is_array($productsArray) && count($productsArray) > 0) {
-
                 $flag = false;
                 for ($i = 0; $i < count($productsSession); $i++) {
                     if ($productsSession[$i]['id'] == $_GET['id']) {
                         $flag = true;
-                        if ($productsArray['counts'] >= $productsSession[$i]['count'] + 1) {
-
+                        if ($productsArray['count'] >= $productsSession[$i]['count'] + 1) {
                             $productsSession[$i]['count']++;
                         }
                         break;
@@ -285,7 +292,8 @@ class PageController extends Controller
      * Авторизация и регистрация (адрес)
      */
 
-    public function actionCheckout()
+    public
+    function actionCheckout()
     {
         return $this->render('checkout');
     }
@@ -293,7 +301,8 @@ class PageController extends Controller
     /**
      * Для страницы Список желаний
      */
-    public function actionListorder()
+    public
+    function actionListorder()
     {
         return $this->render('listorder');
     }
