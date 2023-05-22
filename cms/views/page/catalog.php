@@ -20,22 +20,6 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
 
 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12 catalog"
 <div class="row content">
-    <!--        <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12 catalog_category">-->
-    <!--            <a href="--><?php //=Url::toRoute('page/listproducts');?><!--"><img src="images/prod1.jpg"></a>-->
-    <!--                <a href="--><?php //= Url::toRoute('page/listproducts');?><!--">Бытовая техника</a>-->
-    <!--        </div>-->
-    <!--        <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12 catalog_category">-->
-    <!--            <a href="--><?php //=Url::toRoute('page/listproducts');?><!--"><img src="images/prod1.jpg"></a>-->
-    <!--                <a href="--><?php //=Url::toRoute('page/listproducts');?><!--">Охранные системы</a>-->
-    <!--        </div>-->
-    <!--        <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12 catalog_category">-->
-    <!--            <a href="--><?php //=Url::toRoute('page/listproducts');?><!--"><img src="images/prod1.jpg"></a>-->
-    <!--                <a href="--><?php //=Url::toRoute('page/listproducts');?><!--">Гаджеты</a>-->
-    <!--        </div>-->
-    <!--        <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12 catalog_category">-->
-    <!--            <a href="--><?php //=Url::toRoute('page/listproducts');?><!--"><img src="images/prod1.jpg"></a>-->
-    <!--                <a href="--><?php //=Url::toRoute('page/listproducts');?><!--">Освещение</a>-->
-    <!--        </div>-->
 
     <?php
 

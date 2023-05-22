@@ -6,7 +6,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 
-$this->title = "Интеренет-магазин | " . $categories['name_category'];
+$this->title = "Интеренет-магазин";
 
 $this->registerMetaTag(['name' => 'keywords', 'content' => 'техника, умный дом, интернет вещей']);
 $this->registerMetaTag(['name' => 'description', 'content' => 'системы умного дома']);
@@ -35,21 +35,20 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
 
 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
-
-    <div class="short_description">
     <div class="row content">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 header_list_prod">
             <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 value_prod">
-                    <p>В наличии: <?= $count_products; ?></p>
+                <div class="value_prod" style="text-align: center;">
+                    <h1>Найдено товаров: <?= $count_products; ?></h1>
                 </div>
             </div>
         </div>
+        <? if ($count_products!=0){?>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="row">
                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 sortirovka_and_number_prod">
 
-                    <?php $form = ActiveForm::begin(['action' => ['page/listproducts', 'id' => $categories['id'], 'view' => $view]]);?>
+                    <?php $form = ActiveForm::begin(['action' => ['page/search', 'view' => $view, 'search_text'=>$search_text]]);?>
                     <p><strong>Сортировка по:</strong><?= $form->field($model, 'str')->dropDownList([
                             '0' => 'Цене, по возрастанию',
                             '1' => 'Цене, по убыванию',
@@ -81,11 +80,11 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                         ?>
 
                         <a href="
-        <?= Url::toRoute(['page/listproducts', 'id' => $categories['id'], 'str' => $str, 'number' => $number]); ?>"
+        <?= Url::toRoute(['page/search', 'str' => $str, 'number' => $number, 'search_text'=>$search_text]); ?>"
                            class="
         <?= $class1; ?>"><i class="glyphicon glyphicon-th"></i><span>Сетка</span></a>
                         <a href="
-        <?= Url::toRoute(['page/listproducts', 'id' => $categories['id'], 'view' => '1', 'str' => $str, 'number' => $number]); ?>"
+        <?= Url::toRoute(['page/search', 'view' => '1', 'str' => $str, 'number' => $number, 'search_text'=>$search_text]); ?>"
                            class="
         <?= $class2; ?>"><i class="glyphicon glyphicon-th-list"></i><span>Список</span></a>
 
@@ -198,7 +197,6 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
             <?php endif;
             ?>
         <?php endforeach; ?>
-
     </div>
 
     <div class="row pagination">
@@ -209,7 +207,6 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
         if (isset($_GET['str']))
             $str = $_GET['str'];
         if (isset($count_pages) && $count_pages > 1) {
-
             ?>
             <ul>
                 <?php
@@ -222,14 +219,14 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                         if (isset($_GET['view']) && $_GET['view'] == 1) {
                             ?>
                             <li><a href="
-        <?= Url::toRoute(['page/listproducts', 'id' => $id, 'page' => $i, 'view' => 1, 'number' => $number, 'str' => $str]);
+        <?= Url::toRoute(['page/search', 'page' => $i, 'view' => 1, 'number' => $number, 'str' => $str, 'search_text'=>$search_text]);
                                 ?>">
                                     <?php echo $i;
                                     ?></a></li>
                         <?php } else {
                             ?>
                             <li><a href="
-        <?= Url::toRoute(['page/listproducts', 'id' => $id, 'page' => $i, 'number' => $number, 'str' => $str]);
+        <?= Url::toRoute(['page/search', 'page' => $i, 'number' => $number, 'str' => $str, 'search_text'=>$search_text]);
                                 ?>">
                                     <?php echo $i;
                                     ?></a></li>
@@ -239,6 +236,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                 ?>
             </ul>
             <?php
-        }
+        }}
         ?>
     </div>
+    </div>
+</div>

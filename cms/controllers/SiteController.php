@@ -64,9 +64,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $this->layout = 'main';
-
         $product_array = Products::find()->asArray()->all();
-
 
         return $this->render('index', compact('product_array'));
     }

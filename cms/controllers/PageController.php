@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\db\Expression;
 use yii\filters\AccessControl;
 use app\models\SortForm;
 use yii\web\Controller;
@@ -81,6 +82,7 @@ class PageController extends Controller
                 $view = 1;
             else
                 $view = 0;
+
             return $this->render('listproducts', compact('categories', 'products_array',
                 'count_products', 'view', 'model', 'count_pages', 'id', 'number', 'str'));
         }
@@ -98,6 +100,17 @@ class PageController extends Controller
         return Products::find()->where(['id_category' => $id])->asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
     }
 
+    private
+    function selectSearch($text, $field_sort, $limit, $start)
+    {
+        if ($start == 1)
+            $start = 0;
+        else
+            $start = ($start - 1) * $limit;
+
+        return Products::find()->where(['like', 'name_product', '%' . $text . '%', false])->orderBy($field_sort)->limit($limit)->offset($start)->all();
+    }
+
     /**
      * Для страницы каталога
      */
@@ -105,9 +118,69 @@ class PageController extends Controller
     function actionCatalog()
     {
         $categories = Categories::find()->asArray()->all();
-
-
         return $this->render('catalog', compact('categories'));
+    }
+
+    public function actionSearch()
+    {
+        if (isset($_GET['search_text']) && $_GET['search_text'] != "") {
+            $search_text = $_GET['search_text'];
+            $model = new SortForm();
+            $products_array = Products::find()->where(['like', 'name_product', '%' . $search_text . '%', false])->all();
+//            echo '<pre>';
+//            print_r($products_array);
+//            echo '</pre>';
+            $count_products = count($products_array);
+            if ($count_products != 0) {
+                $page = 1; // номер страницы
+                $str = -1; // сортировка
+                $number = 12; // количество товаров на странице
+
+                if (isset($_GET['page']) && $_GET['page'] != "" && filter_var($_GET['page'], FILTER_VALIDATE_INT)) {
+                    $page = $_GET['page'];
+                }
+                if (isset($_GET['str'])) {
+                    $str = $_GET['str'];
+                }
+                if (isset($_GET['number']) && $_GET['number'] != "" && filter_var($_GET['number'], FILTER_VALIDATE_INT)) {
+                    $number = $_GET['number'];
+                }
+                // Обработчик для формы сортировки
+                if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                    if (isset($model->number) && !empty($model->number)) {
+                        $number = $model->number;
+                    }
+                    if (isset($model->str)) {
+                        $str = $model->str;
+                    }
+                }
+                switch ($str) {
+                    case 0:
+                        $products_array = $this->selectSearch($search_text, ['price' => SORT_ASC], $number, $page);
+                        break;
+                    case 1:
+                        $products_array = $this->selectSearch($search_text, ['price' => SORT_DESC], $number, $page);
+                        break;
+                    case 2:
+                        $products_array = $this->selectSearch($search_text, ['name_product' => SORT_ASC], $number, $page);
+                        break;
+                    case 3:
+                        $products_array = $this->selectSearch($search_text, ['name_product' => SORT_DESC], $number, $page);
+                        break;
+                    default:
+                        $products_array = $this->selectSearch($search_text, ['id' => SORT_ASC], $number, $page);
+                        break;
+                }
+                $count_pages = ceil($count_products / $number);
+                if (isset($_GET['view']) && $_GET['view'] == 1)
+                    $view = 1;
+                else
+                    $view = 0;
+            }
+            return $this->render('search', compact('products_array',
+                'count_products', 'view', 'model', 'count_pages', 'number', 'str', 'search_text'));
+        }
+        return $this->redirect(['site/index']);
     }
 
     /**

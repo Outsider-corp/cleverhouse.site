@@ -39,12 +39,12 @@ ProdAsset::register($this);
                 <a href="<?=Url::toRoute('page/login');?>"><i class="glyphicon glyphicon-lock"></i>Войти</a>
               </div>
               <div class="search_top">
-                <form>
-                    <input placeholder="Поиск" type="text">
-                    <button type="submit" name="submit_search">
-                      <i class="glyphicon glyphicon-search"></i>
-                    </button>
-                </form>
+                  <form action="<?= Yii::$app->urlManager->createUrl(['page/search']) ?>" method="post">
+                      <input placeholder="Поиск" type="text" name="search_text">
+                      <button type="submit" name="submit_search">
+                          <i class="glyphicon glyphicon-search"></i>
+                      </button>
+                  </form>
               </div>
             </div>
             <div class="cart_top">
