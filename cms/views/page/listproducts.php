@@ -6,7 +6,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 
-  $this->title = "Интеренет-магазин | ".$categories['name_category'];
+$this->title = "Интеренет-магазин | " . $categories['name_category'];
 
 $this->registerMetaTag(['name' => 'keywords', 'content' => 'техника, умный дом, интернет вещей']);
 $this->registerMetaTag(['name' => 'description', 'content' => 'системы умного дома']);
@@ -58,7 +58,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
             <div class="row">
                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 sortirovka_and_number_prod">
 
-                    <?php $form = ActiveForm::begin(['action' => ['page/listproducts', 'id' => $categories['id'], 'view' => $view]]); ?>
+                    <?php $form = ActiveForm::begin(['action' => ['page/listproducts', 'id' => $categories['id'], 'view' => $view]]);?>
                     <p><strong>Сортировка по:</strong><?= $form->field($model, 'str')->dropDownList([
                             '0' => 'Цене, по возрастанию',
                             '1' => 'Цене, по убыванию',
@@ -81,6 +81,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                 <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs view_list_prod">
                     <p><strong>Вид:</strong>
                         <?php
+                        $class1 = "";
+                        $class2 = "";
                         if ($view == 1)
                             $class2 = "active";
                         else
@@ -190,9 +192,12 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                                 <?php endif; ?>
                             </div>
                             <div class="product_btn">
+                                <?php if ($product_array['count'] == 0):?>
+                                <a class="cart disabled"><i class="glyphicon glyphicon-shopping-cart disabled"></i></a>
+                                <?php else: ?>
                                 <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>"
-                                   class="cart"><i
-                                            class="glyphicon glyphicon-shopping-cart"></i></a>
+                                   class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
+                                <?php endif;?>
                                 <a href="<?= Url::toRoute(['page/listorder', 'id' => $product_array['id']]); ?>"
                                    class="mylist">Список желаний</a>
                             </div>
@@ -218,7 +223,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
             <ul>
                 <?php
                 for ($i = 1; $i <= $count_pages; $i++) {
-                    if ((!isset($_GET['page']) && $i == 1) || $_GET['page'] == $i) {
+                    if ((!isset($_GET['page']) && $i == 1) || (isset($_GET['page']) && $_GET['page'] == $i)) {
                         ?>
                         <li class="active"><span><?php echo $i;
                                 ?></span></li>

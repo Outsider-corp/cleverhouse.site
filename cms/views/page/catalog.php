@@ -41,8 +41,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'снаряжен�
 
     foreach ($categories as $category): ?>
         <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12 catalog_category">
-        <a href="<?= Url::toRoute(['page/listproducts', 'id' =>$category['id']]); ?>"><img src="images/<?echo $category['img_category'];?>"></a>
-        <a href="<?= Url::toRoute(['page/listproducts', 'id' =>$category['id']]); ?>"><?echo $category['name_category'];?></a>
+        <a href="<?= Url::toRoute(['page/listproducts', 'id' =>$category['id']]); ?>"><img src="images/<?php echo $category['img_category'];?>"></a>
+        <a href="<?= Url::toRoute(['page/listproducts', 'id' =>$category['id']]); ?>"><?php echo $category['name_category'];?></a>
         </div>
         <?php endforeach; ?>
 

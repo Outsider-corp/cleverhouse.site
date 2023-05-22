@@ -33,7 +33,7 @@ class PageController extends Controller
                 $count_products = count(Products::find()->where(['id_category' => $id])->asArray()->all());
 
                 $page = 1; // номер страницы
-                $str = null; // сортировка
+                $str = -1; // сортировка
                 $number = 12; // количество товаров на странице
 
                 if (isset($_GET['page']) && $_GET['page'] != "" && filter_var($_GET['page'], FILTER_VALIDATE_INT)) {

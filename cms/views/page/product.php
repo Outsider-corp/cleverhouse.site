@@ -55,17 +55,15 @@ $this->title = 'Карточка товара';
                 <button type="button" class="minus">-</button>
                 <button type="button" class="plus">+</button>
             </form>
-        <?php
-        else:
-            $class = "disabled";
-            ?>
+            <a href="<?= Url::toRoute('page/cart'); ?>" class="add_cart_prod"><i
+                        class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
+        <?php else: ?>
             <p>Нет в наличии</p>
+            <a class="add_cart_prod disabled"><i class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
         <?php
         endif;
         ?>
-        <a href="<?= Url::toRoute('page/cart'); ?>" class="add_cart_prod <?php echo $class; ?>"><i
-                    class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
-        <a href="#" class="add_mylist_prod <?php echo $class; ?>"><i class="glyphicon glyphicon-heart"></i>В список
+        <a href="#" class="add_mylist_prod"><i class="glyphicon glyphicon-heart"></i>В список
             желаний</a>
     </div>
 </div>

@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Products;
 
 class SiteController extends Controller
 {
@@ -63,7 +64,11 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $this->layout = 'main';
-        return $this->render('index');
+
+        $product_array = Products::find()->asArray()->all();
+
+
+        return $this->render('index', compact('product_array'));
     }
 
     /**

@@ -5,7 +5,8 @@
 header{
 	display: block;
 	width:100%;
-	background: url("../images/Фон.png") no-repeat 0% 0;
+	background: url("../images/Фон.png") no-repeat 50% 0;
+	background-size: contain;
 	overflow: hidden;
     position: relative;
     height: 700px;
@@ -15,10 +16,6 @@ header{
 }
 .menu_top{
 	background: url("../images/fon_top_menu.png") no-repeat 50% 0;
-}
-.logo img{
-	display: block;
-	width: 100%;
 }
 .btn_top_wrap{
 	text-align: right;
@@ -438,6 +435,12 @@ header{
 .menu_top #w0{
 	margin-bottom: 0px;
 }
+a.disabled{
+	opacity: 0.5;
+}
+a.disabled:hover{
+	opacity: 0.5;
+}
 @media all and (max-width: 1200px) and (min-width: 992px){
 	.ban_block p {
 	    color: #fff;
@@ -451,18 +454,6 @@ header{
 	}
 }
 @media all and (max-width: 992px) and (min-width: 768px){
-	.logo img {
-	    display: block;
-	    width: 100%;
-	    max-width: 400px; 
-	}
-	.logo a{
-		display: inline-block;
-	}
-	.logo{
-		text-align: center;
-		margin-bottom:20px;
-	}
 	.search_top input {
 	    padding: 14px 15px;
 	    width: 100%;
@@ -482,18 +473,6 @@ header{
 	}
 }
 @media all and (max-width: 768px){
-	.logo img {
-	    display: block;
-	    width: 100%;
-	    max-width: 400px; 
-	}
-	.logo a{
-		display: inline-block;
-	}
-	.logo{
-		text-align: center;
-		margin-bottom:20px;
-	}
 	.search_top input {
 	    padding: 14px 15px;
 	    width: 100%;
