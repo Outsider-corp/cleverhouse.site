@@ -107,76 +107,76 @@ ProdAsset::register($this);
         </div>
     </div>
 
-    <div class="container-fluid write_email_and_sseti">
-      <div class="container">
+<div class="container-fluid write_email_and_sseti">
+    <div class="container">
         <div class="row write_email_and_sseti_wrap">
-          <div class="col-lg-6 col-md-6 col-sm-7 col-xs-12 write_email">
-            <p>Рассылка</p>
-            <form>
-              <button type="submit">
-                      <i class="glyphicon glyphicon-chevron-right"></i>
+            <div class="col-lg-6 col-md-6 col-sm-7 col-xs-12 write_email">
+                <p>Рассылка</p>
+                <form>
+                    <button type="submit">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
                     </button>
-              <input type="text" placeholder="Введите E-mail">
-            </form>
-          </div>
-          <div class="col-lg-6 col-md-6 col-sm-5 hidden-xs sseti_wrap">
-            <div>
-              <a href="#"><i class="fa fa-facebook"></i></a>
-              <a href="#"><i class="fa fa-vk"></i></a>
-              <a href="#"><i class="fa fa-instagram"></i></a>
+                    <input type="text" placeholder="Введите E-mail">
+                </form>
             </div>
-          </div>
+            <div class="col-lg-6 col-md-6 col-sm-5 hidden-xs sseti_wrap">
+                <div>
+                    <a href="#"><i class="fa fa-facebook"></i></a>
+                    <a href="#"><i class="fa fa-vk"></i></a>
+                    <a href="#"><i class="fa fa-instagram"></i></a>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    <div class="container-fluid footer">
-      <div class="container">
+</div>
+<div class="container-fluid footer">
+    <div class="container">
         <div class="row menu_footer_and_contact">
-          <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-            <div class="footer_menu">
-              <h3>Категории</h3>
-              <ul>
-                <li><a href="#">Одежда</a></li>
-                <li><a href="#">Обувь</a></li>
-                <li><a href="#">Снаряжение</a></li>
-                <li><a href="#">Амуниция</a></li>
-                <li><a href="#">Сувениры</a></li>
-              </ul>
+            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                <div class="footer_menu">
+                    <h3>Категории</h3>
+                    <ul>
+                        <li><a href="#">Свет</a></li>
+                        <li><a href="#">Датчики</a></li>
+                        <li><a href="#">Розетки</a></li>
+                        <li><a href="#">Пылесосы</a></li>
+                        <li><a href="#">Кондиционеры</a></li>
+                    </ul>
+                </div>
+                <div class="footer_menu">
+                    <h3>Информация</h3>
+                    <ul>
+                        <li><a href="<?=Url::toRoute('page/dostavka');?>">Доставка</a></li>
+                        <li><a href="<?=Url::toRoute('page/oplata');?>">Оплата</a></li>
+                        <li><a href="<?=Url::toRoute('page/about');?>">О компании</a></li>
+                        <li><a href="<?=Url::toRoute('page/sale');?>">Скидки</a></li>
+                        <li><a href="<?=Url::toRoute('page/sitemap');?>">Карта сайта</a></li>
+                    </ul>
+                </div>
+                <div class="footer_menu">
+                    <h3>Учетная запись</h3>
+                    <ul>
+                        <li><a href="<?=Url::toRoute('page/login');?>">Войти</a></li>
+                        <li><a href="<?=Url::toRoute('page/registration');?>">Зарегистрироваться</a></li>
+                        <li><a href="<?=Url::toRoute('page/cart');?>">Мои заказы</a></li>
+                        <li><a href="<?=Url::toRoute('page/listorder');?>">Список желаний</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="footer_menu">
-                <h3>Информация</h3>
-                <ul>
-                    <li><a href="<?=Url::toRoute('page/dostavka');?>">Доставка</a></li>
-                    <li><a href="<?=Url::toRoute('page/oplata');?>">Оплата</a></li>
-                    <li><a href="<?=Url::toRoute('page/about');?>">О компании</a></li>
-                    <li><a href="<?=Url::toRoute('page/sale');?>">Скидки</a></li>
-                    <li><a href="<?=Url::toRoute('page/sitemap');?>">Карта сайта</a></li>
-                </ul>
+            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 contacts">
+                <h3>Контакты</h3>
+                <p><i class="glyphicon glyphicon-map-marker"></i>Адрес: пр. Просвещения, 14 г. Санкт-Петербург, 194355</p>
+                <p><i class="glyphicon glyphicon-phone-alt"></i>Служба поддержки: 8 (921) 187-92-52</p>
+                <p><i class="glyphicon glyphicon-envelope"></i>E-mail: sokolovalexandra@icloud.com</p>
             </div>
-            <div class="footer_menu">
-                <h3>Учетная запись</h3>
-                <ul>
-                    <li><a href="<?=Url::toRoute('page/login');?>">Войти</a></li>
-                    <li><a href="<?=Url::toRoute('page/registration');?>">Зарегистрироваться</a></li>
-                    <li><a href="<?=Url::toRoute('page/cart');?>">Мои заказы</a></li>
-                    <li><a href="<?=Url::toRoute('page/listorder');?>">Список желаний</a></li>
-                </ul>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 contacts">
-            <h3>Контакты</h3>
-            <p><i class="glyphicon glyphicon-map-marker"></i>Адрес: ул. Ленина, 9 г. Москва, 603089</p>
-            <p><i class="glyphicon glyphicon-phone-alt"></i>Служба поддержки: 8 (800) 000-00-00</p>
-            <p><i class="glyphicon glyphicon-envelope"></i>E-mail: info@myshop.ru</p>
-          </div>
         </div>
         <div class="row">
-          <div class="col-lg-12 copy">
-            <p>© 2017 не является действующим интернет-магазином</p>
-          </div>
+            <div class="col-lg-12 copy">
+                <p>© 2023 ООО "Умный дом"</p>
+            </div>
         </div>
-      </div>
     </div>
+</div>
 
 
 

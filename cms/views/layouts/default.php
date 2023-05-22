@@ -130,11 +130,11 @@ DefaultAsset::register($this);
             <div class="footer_menu">
               <h3>Категории</h3>
               <ul>
-                <li><a href="#">Одежда</a></li>
-                <li><a href="#">Обувь</a></li>
-                <li><a href="#">Снаряжение</a></li>
-                <li><a href="#">Амуниция</a></li>
-                <li><a href="#">Сувениры</a></li>
+                <li><a href="#">Свет</a></li>
+                <li><a href="#">Датчики</a></li>
+                <li><a href="#">Розетки</a></li>
+                <li><a href="#">Пылесосы</a></li>
+                <li><a href="#">Кондиционеры</a></li>
               </ul>
             </div>
             <div class="footer_menu">
@@ -159,14 +159,14 @@ DefaultAsset::register($this);
           </div>
           <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 contacts">
             <h3>Контакты</h3>
-            <p><i class="glyphicon glyphicon-map-marker"></i>Адрес: ул. Ленина, 9 г. Москва, 603089</p>
-            <p><i class="glyphicon glyphicon-phone-alt"></i>Служба поддержки: 8 (800) 000-00-00</p>
-            <p><i class="glyphicon glyphicon-envelope"></i>E-mail: info@myshop.ru</p>
+            <p><i class="glyphicon glyphicon-map-marker"></i>Адрес: пр. Просвещения, 14 г. Санкт-Петербург, 194355</p>
+            <p><i class="glyphicon glyphicon-phone-alt"></i>Служба поддержки: 8 (921) 187-92-52</p>
+            <p><i class="glyphicon glyphicon-envelope"></i>E-mail: sokolovalexandra@icloud.com</p>
           </div>
         </div>
         <div class="row">
           <div class="col-lg-12 copy">
-            <p>© 2017 не является действующим интернет-магазином</p>
+            <p>© 2023 ООО "Умный дом"</p>
           </div>
         </div>
       </div>

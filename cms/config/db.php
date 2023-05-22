@@ -2,8 +2,8 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost:3307;dbname=cleverhouse_db',
-    'username' => 'clever_user',
-    'password' => '123',
+    'dsn' => 'mysql:host=localhost:3306;dbname=cleverhouse_db',
+    'username' => 'root',
+    'password' => 'usbw',
     'charset' => 'utf8',
 ];
