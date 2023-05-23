@@ -118,20 +118,11 @@ AppAsset::register($this);
     <div class="container-fluid write_email_and_sseti">
         <div class="container">
             <div class="row write_email_and_sseti_wrap">
-                <div class="col-lg-6 col-md-6 col-sm-7 col-xs-12 write_email">
-                    <p>Рассылка</p>
-                    <form>
-                        <button type="submit">
-                            <i class="glyphicon glyphicon-chevron-right"></i>
-                        </button>
-                        <input type="text" placeholder="Введите E-mail">
-                    </form>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-5 hidden-xs sseti_wrap">
+                <div class="hidden-xs sseti_wrap">
                     <div>
-                        <a href="#"><i class="fa fa-facebook"></i></a>
-                        <a href="#"><i class="fa fa-vk"></i></a>
-                        <a href="#"><i class="fa fa-instagram"></i></a>
+                        <a href="https://ru-ru.facebook.com/" target="_blank"><i class="fa fa-facebook"></i></a>
+                        <a href="https://vk.com/" target="_blank"><i class="fa fa-vk"></i></a>
+                        <a href="https://www.instagram.com/ " target="_blank"><i class="fa fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -158,7 +149,6 @@ AppAsset::register($this);
                             <li><a href="<?= Url::toRoute('page/oplata'); ?>">Оплата</a></li>
                             <li><a href="<?= Url::toRoute('page/about'); ?>">О компании</a></li>
                             <li><a href="<?= Url::toRoute('page/sale'); ?>">Скидки</a></li>
-                            <li><a href="<?= Url::toRoute('page/sitemap'); ?>">Карта сайта</a></li>
                         </ul>
                     </div>
                     <div class="footer_menu">
@@ -221,9 +211,9 @@ AppAsset::register($this);
     */
     ?>
 
-    <? /*= Breadcrumbs::widget([
+    <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) */ ?>
+        ]) ?>
     <? //= $content ?>
 
 

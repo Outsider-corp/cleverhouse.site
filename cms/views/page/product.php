@@ -55,7 +55,7 @@ $this->title = 'Карточка товара';
                 <button type="button" class="minus">-</button>
                 <button type="button" class="plus">+</button>
             </form>
-            <a href="<?= Url::toRoute('page/cart'); ?>" class="add_cart_prod"><i
+            <a href="<?= Url::toRoute(['page/cart', 'id'=>$product_array['id']]); ?>" class="add_cart_prod"><i
                         class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
         <?php else: ?>
             <p>Нет в наличии</p>

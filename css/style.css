@@ -247,6 +247,9 @@ header{
 	font-size:16px;
 	margin:10px 0 5px;
 	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .product .price{
 	font-size:26px;
@@ -397,7 +400,7 @@ header{
 }
 .sseti_wrap{
 	margin-top: 6px;
-    text-align: right;
+    text-align: center;
 }
 .sseti_wrap > div {
     display: inline-block;
@@ -414,7 +417,6 @@ header{
 	color:#ff5b23;
 	font-size: 20px;
 }
-
 .cart_top a:hover{
 	background-color: #343434;
 	color:#fff;

@@ -73,7 +73,10 @@ use yii\helpers\Url;
     const minuses = document.querySelectorAll('.minus_cart');
     const rez = document.querySelectorAll('.rez_one');
     const rez_all = document.querySelector('.rez_sum');
-    var sum = <?php echo $sum;?>;
+    var sum = <?php if (isset($sum))
+        echo $sum;
+    else
+        echo 0?>;
     const prod = <?php echo json_encode($products);?>;
 
     pluses.forEach((btn, index) => {

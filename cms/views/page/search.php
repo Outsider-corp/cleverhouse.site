@@ -15,22 +15,20 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
 
 <div class="col-lg-3 col-md-3 col-sm-5 col-xs-12 filter">
     <h3>Фильтры</h3>
-    <form>
-        <label>Цена / руб</label>
-        <div class="filter_price">
-            <input type="text" value="0">
-            -
-            <input type="text" value="10000">
+    <?php $form = ActiveForm::begin(['action' => ['page/search', 'view' => $view, 'search_text' => $search_text]]); ?>
+    <div class="form-group">
+        <label class="control-label">Цена / руб</label>
+        <div class="input-group">
+            <?= $form->field($filterModel, 'price_from')->textInput(['type' => 'text', 'class' => 'form-control',
+                'value' => $price_from])->label(false) ?>
+            <span class="input-group-addon">-</span>
+            <?= $form->field($filterModel, 'price_to')->textInput(['type' => 'text', 'class' => 'form-control',
+                'value' => $price_to])->label(false) ?>
         </div>
-        <label>Объем / л</label>
-        <div class="filter_check">
-            <p><input type="checkbox"/>10</p>
-            <p><input type="checkbox"/>20</p>
-            <p><input type="checkbox"/>30</p>
-        </div>
-
-        <button type="submit">Подобрать</button>
-    </form>
+    </div>
+    <?= $form->field($filterModel, 'volume')->label('Объем / л')->checkboxList(['10' => '10', '20' => '20', '30' => '30']) ?>
+    <?= Html::submitButton('Подобрать', ['class' => 'btn btn-primary', 'name' => 'submit-button']) ?>
+    <?php ActiveForm::end(); ?>
 </div>
 
 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -39,16 +37,18 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 header_list_prod">
             <div class="row">
                 <div class="value_prod" style="text-align: center;">
-                    <h1>Найдено товаров: <?= $count_products; ?></h1>
+                    <h1>Найдено товаров, содержащих "<?php echo $search_text; ?>": <?= $count_products; ?></h1>
                 </div>
             </div>
         </div>
-        <? if ($count_products!=0){?>
+        <?php if ($count_products != 0){ ?>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="row">
                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 sortirovka_and_number_prod">
 
-                    <?php $form = ActiveForm::begin(['action' => ['page/search', 'view' => $view, 'search_text'=>$search_text]]);?>
+                    <?php $form = ActiveForm::begin(['action' => ['page/search', 'view' => $view,
+                        'search_text' => $search_text, 'price_from' => $price_from, 'price_to' => $price_to,
+                        'value'=>$value]]); ?>
                     <p><strong>Сортировка по:</strong><?= $form->field($model, 'str')->dropDownList([
                             '0' => 'Цене, по возрастанию',
                             '1' => 'Цене, по убыванию',
@@ -80,11 +80,13 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                         ?>
 
                         <a href="
-        <?= Url::toRoute(['page/search', 'str' => $str, 'number' => $number, 'search_text'=>$search_text]); ?>"
+        <?= Url::toRoute(['page/search', 'str' => $str, 'number' => $number, 'search_text' => $search_text,
+                            'price_from' => $price_from, 'price_to' => $price_to, 'value'=>$value]); ?>"
                            class="
         <?= $class1; ?>"><i class="glyphicon glyphicon-th"></i><span>Сетка</span></a>
                         <a href="
-        <?= Url::toRoute(['page/search', 'view' => '1', 'str' => $str, 'number' => $number, 'search_text'=>$search_text]); ?>"
+        <?= Url::toRoute(['page/search', 'view' => '1', 'str' => $str, 'number' => $number, 'search_text' => $search_text,
+                            'price_from' => $price_from, 'price_to' => $price_to, 'value'=>$value]); ?>"
                            class="
         <?= $class2; ?>"><i class="glyphicon glyphicon-th-list"></i><span>Список</span></a>
 
@@ -182,12 +184,12 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                                 <?php endif; ?>
                             </div>
                             <div class="product_btn">
-                                <?php if ($product_array['count'] == 0):?>
+                                <?php if ($product_array['count'] == 0): ?>
                                     <a class="cart disabled"><i class="glyphicon glyphicon-shopping-cart disabled"></i></a>
                                 <?php else: ?>
                                     <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>"
                                        class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
-                                <?php endif;?>
+                                <?php endif; ?>
                                 <a href="<?= Url::toRoute(['page/listorder', 'id' => $product_array['id']]); ?>"
                                    class="mylist">Список желаний</a>
                             </div>
@@ -195,8 +197,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                     </div>
                 </div>
             <?php endif;
-            ?>
-        <?php endforeach; ?>
+        endforeach; ?>
     </div>
 
     <div class="row pagination">
@@ -219,14 +220,17 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                         if (isset($_GET['view']) && $_GET['view'] == 1) {
                             ?>
                             <li><a href="
-        <?= Url::toRoute(['page/search', 'page' => $i, 'view' => 1, 'number' => $number, 'str' => $str, 'search_text'=>$search_text]);
+        <?= Url::toRoute(['page/search', 'page' => $i, 'view' => 1, 'number' => $number, 'str' => $str,
+                                    'search_text' => $search_text, 'price_from' => $price_from,
+                                    'price_to' => $price_to, 'value'=>$value]);
                                 ?>">
                                     <?php echo $i;
                                     ?></a></li>
                         <?php } else {
                             ?>
                             <li><a href="
-        <?= Url::toRoute(['page/search', 'page' => $i, 'number' => $number, 'str' => $str, 'search_text'=>$search_text]);
+        <?= Url::toRoute(['page/search', 'page' => $i, 'number' => $number, 'str' => $str, 'search_text' => $search_text,
+                                    'price_from' => $price_from, 'price_to' => $price_to, 'value'=>$value]);
                                 ?>">
                                     <?php echo $i;
                                     ?></a></li>
@@ -236,8 +240,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                 ?>
             </ul>
             <?php
-        }}
+        }
+        }
         ?>
-    </div>
     </div>
 </div>

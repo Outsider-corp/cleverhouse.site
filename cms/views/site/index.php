@@ -32,7 +32,7 @@ $this->title = 'Умный дом';
                         $product_array_small = $product_array;}
                     for ($i = 0; $i < count($product_array_small); $i++) {
                         ?>
-                    <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <div class="product">
                             <a href="<?= Url::toRoute(['page/product', 'id' => $product_array_small[$i]['id']]); ?>"
                                class="product_img">
@@ -77,7 +77,7 @@ $this->title = 'Умный дом';
                             break;
                         endif;
                         ?>
-                        <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                             <div class="product">
                                 <a href="<?= Url::toRoute(['page/product', 'id' => $product_array[$i]['id']]); ?>"
                                    class="product_img">
@@ -122,7 +122,7 @@ $this->title = 'Умный дом';
                             break;
                         endif;
                         ?>
-                        <div class="col-lg-4 col-md-6 col-sm-4 col-xs-12">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                             <div class="product">
                                 <a href="<?= Url::toRoute(['page/product', 'id' => $product_array[$i]['id']]); ?>"
                                    class="product_img">

@@ -237,6 +237,9 @@ header{
 	font-size:16px;
 	margin:10px 0 5px;
 	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .product .price{
 	font-size:26px;
@@ -384,7 +387,7 @@ header{
 }
 .sseti_wrap{
 	margin-top: 6px;
-    text-align: right;
+    text-align: center;
 }
 .sseti_wrap > div {
     display: inline-block;
@@ -934,6 +937,10 @@ a.disabled:hover{
 		margin-top:30px;
 		border:0px;
 	}
+	.img_prod img{
+		height: 300px;
+		width: 300px;
+	}
 }
 @media all and (max-width: 992px) and (min-width: 768px){
 	.search_top input {
@@ -953,8 +960,16 @@ a.disabled:hover{
 		margin-top:30px;
 		border:0px;
 	}
+	.img_prod img{
+		height: 250px;
+		width: 250px;
+	}
 }
 @media all and (max-width: 768px){
+	.img_prod{
+		text-align: center;
+	}
+
 	.cart_status li{
 		width: 100%;
 	}

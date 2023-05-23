@@ -11,6 +11,7 @@ class CartWidget extends Widget
     public $count;
     function __construct(){
         $session = Yii::$app->session;
+//        $session->destroy();
         $session->open();
 
         if($session->has('productsSession')){
