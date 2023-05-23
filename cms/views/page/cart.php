@@ -7,7 +7,7 @@ use yii\helpers\Url;
 <div class="col-lg-12 top_cart_block">
     <div>
         <p>Состояние корзины</p>
-        <p>Ваша корзина содержит: <?php echo count($products); ?> товар</p>
+        <p>Товаров в корзине: <?php echo count($products);?></p>
     </div>
 </div>
 <div class="col-lg-12">
