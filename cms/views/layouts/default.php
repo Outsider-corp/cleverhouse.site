@@ -18,7 +18,7 @@ DefaultAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language = 'ru';?>">
+<html lang="<?= Yii::$app->language?>">
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -40,8 +40,17 @@ DefaultAsset::register($this);
                     <div class="btn_top">
                         <a href="<?= Url::toRoute('page/formcontact'); ?>"><i
                                     class="glyphicon glyphicon-map-marker"></i>Обратная связь</a>
-                        <a href="<?= Url::toRoute('page/lk'); ?>"><i class="glyphicon glyphicon-user"></i>Личный кабинет</a>
-                        <a href="<?= Url::toRoute('page/login'); ?>"><i class="glyphicon glyphicon-lock"></i>Войти</a>
+                        <?php if (!Yii::$app->user->isGuest): ?>
+                            <a href="<?= Url::toRoute('page/lk'); ?>"><i class="glyphicon glyphicon-user"></i>Личный
+                                кабинет (<?=Yii::$app->user->identity['login_user'];?>)</a>
+                            <a href="<?= Url::toRoute('site/logout'); ?>"><i
+                                        class="glyphicon glyphicon-lock"></i>Выйти</a>
+                        <?php else:?>
+                            <a href="<?= Url::toRoute('site/login'); ?>"><i
+                                        class="glyphicon glyphicon-lock"></i>Войти</a>
+                            <a href="<?= Url::toRoute('site/registration'); ?>"><i
+                                        class="glyphicon glyphicon-lock"></i>Зарегистрироваться</a>
+                        <?php endif;?>
                     </div>
                     <div class="search_top">
                         <!-- Форма с текстовым полем и кнопкой отправки -->
@@ -143,10 +152,13 @@ DefaultAsset::register($this);
                 <div class="footer_menu">
                     <h3>Учетная запись</h3>
                     <ul>
-                        <li><a href="<?= Url::toRoute('page/login'); ?>">Войти</a></li>
-                        <li><a href="<?= Url::toRoute('page/registration'); ?>">Зарегистрироваться</a></li>
+                        <li><a href="<?= Url::toRoute('site/login'); ?>">Войти</a></li>
+                        <li><a href="<?= Url::toRoute('site/registration'); ?>">Зарегистрироваться</a></li>
                         <li><a href="<?= Url::toRoute('page/cart'); ?>">Мои заказы</a></li>
                         <li><a href="<?= Url::toRoute('page/listorder'); ?>">Список желаний</a></li>
+                        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin'):?>
+                        <li><a href="<?= Url::toRoute('site/admin'); ?>">Панель администратора</a></li>
+                        <?php endif;?>
                     </ul>
                 </div>
             </div>

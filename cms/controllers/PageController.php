@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Cart;
 use app\models\FilterForm;
+use app\models\SpecCart;
 use Yii;
 use yii\db\Expression;
 use yii\filters\AccessControl;
@@ -370,52 +372,102 @@ class PageController extends Controller
     public
     function actionCart()
     {
-        $session = Yii::$app->session;
-//        $session->destroy();
-        $session->open();
-
-
-        if ($session->has('productsSession')) {
-            $productsSession = $session->get('productsSession');
-        } else {
-            $productsSession = array();
-        }
-
-        if (isset($_GET['id']) && !empty($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-            $productsArray = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
-
-            if (is_array($productsArray) && count($productsArray) > 0) {
-                $flag = false;
-                for ($i = 0; $i < count($productsSession); $i++) {
-                    if ($productsSession[$i]['id'] == $_GET['id']) {
-                        $flag = true;
-                        if ($productsArray['count'] >= $productsSession[$i]['count'] + 1) {
-                            $productsSession[$i]['count']++;
-                        }
-                        break;
-                    }
+        $products = [];
+        $productId = Yii::$app->request->get('id');
+        if (!Yii::$app->user->isGuest) {
+            $userId = Yii::$app->user->id;
+            $cart = Cart::findOne(['id_user' => $userId]);
+            if ($cart === null) {
+                $cart = new Cart();
+                $cart->id_user = $userId;
+                $cart->save();
+            }
+            if ($productId !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT)) {
+                $specCart = SpecCart::findOne(['id_cart' => $cart->id_cart, 'id_product' => $productId]);
+                if ($specCart === null) {
+                    $specCart = new SpecCart();
+                    $specCart->id_cart = $cart->id_cart;
+                    $specCart->id_product = $productId;
+                    $specCart->count = 1;
+                    $specCart->save();
+                } else {
+                    $specCart->count++;
                 }
-                if (!$flag) {
-                    array_push($productsSession, ['id' => $_GET['id'], 'count' => 1]);
+                $specCart->save();
+            }
+
+            $specCartItems = SpecCart::find()
+                ->select(['id_product', 'count'])
+                ->where(['id_cart' => $cart->id_cart])
+                ->asArray()
+                ->all();
+
+            $products = [];
+            foreach ($specCartItems as $item) {
+                $productId = $item['id_product'];
+                $count = $item['count'];
+                $product = Products::findOne($productId);
+                if ($product !== null) {
+                    $products[] = [
+                        'id' => $productId,
+                        'name_product' => $product->name_product,
+                        'price' => $product->price,
+                        'description' => $product->description,
+                        'count' => $product->count,
+                        'id_category' => $product->id_category,
+                        'img_product' => $product->img_product,
+                        'count_cart' => $count,
+                    ];
                 }
             }
+        } else {
+
+            $session = Yii::$app->session;
+//        $session->destroy();
+            $session->open();
+
+
+            if ($session->has('productsSession')) {
+                $productsSession = $session->get('productsSession');
+            } else {
+                $productsSession = array();
+            }
+
+            if ($productId !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT)) {
+                $productsArray = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
+
+                if (is_array($productsArray) && count($productsArray) > 0) {
+                    $flag = false;
+                    for ($i = 0; $i < count($productsSession); $i++) {
+                        if ($productsSession[$i]['id'] == $_GET['id']) {
+                            $flag = true;
+                            if ($productsArray['count'] >= $productsSession[$i]['count'] + 1) {
+                                $productsSession[$i]['count']++;
+                            }
+                            break;
+                        }
+                    }
+                    if (!$flag) {
+                        array_push($productsSession, ['id' => $_GET['id'], 'count' => 1]);
+                    }
+                }
+            }
+
+            $session->set('productsSession', $productsSession);
+            $productsSession = $session->get('productsSession');
+
+            $arrayID = array();
+
+            foreach ($productsSession as $value) {
+                array_push($arrayID, $value['id']);
+            }
+
+            $products = Products::find()->where(['id' => $arrayID])->asArray()->All();
+
+            foreach ($products as $key => $value) {
+                $products[$key]['count_cart'] = $productsSession[$key]['count'];
+            }
         }
-
-        $session->set('productsSession', $productsSession);
-        $productsSession = $session->get('productsSession');
-
-        $arrayID = array();
-
-        foreach ($productsSession as $value) {
-            array_push($arrayID, $value['id']);
-        }
-
-        $products = Products::find()->where(['id' => $arrayID])->asArray()->All();
-
-        foreach ($products as $key => $value) {
-            $products[$key]['count_cart'] = $productsSession[$key]['count'];
-        }
-
 
         return $this->render('cart', compact('products'));
     }

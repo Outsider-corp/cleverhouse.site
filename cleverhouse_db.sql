@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- База данных: `cleverhouse_db`
 --
-CREATE DATABASE IF NOT EXISTS `cleverhouse_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+/CREATE DATABASE IF NOT EXISTS `cleverhouse_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `cleverhouse_db`;
 
 -- --------------------------------------------------------

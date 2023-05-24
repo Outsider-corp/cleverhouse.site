@@ -1,6 +1,7 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
 use yii\helpers\Html;
@@ -27,85 +28,95 @@ ProdAsset::register($this);
 <?php $this->beginBody() ?>
 
 
-    <header>
-      <div class="container">
+<header>
+    <div class="container">
         <div class="row header_top">
             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12"></div>
-          <div class="btn_top_wrap col-lg-8 col-md-8 col-sm-12 col-xs-12">
-            <div class="btn_and_search">
-              <div class="btn_top">
-                <a href="<?=Url::toRoute('page/formcontact');?>"><i class="glyphicon glyphicon-map-marker"></i>Обратная связь</a>
-                <a href="<?=Url::toRoute('page/lk');?>"><i class="glyphicon glyphicon-user"></i>Личный кабинет</a>
-                <a href="<?=Url::toRoute('page/login');?>"><i class="glyphicon glyphicon-lock"></i>Войти</a>
-              </div>
-              <div class="search_top">
-                  <form action="<?= Yii::$app->urlManager->createUrl(['page/search']) ?>" method="post">
-                      <input placeholder="Поиск" type="text" name="search_text">
-                      <button type="submit" name="submit_search">
-                          <i class="glyphicon glyphicon-search"></i>
-                      </button>
-                  </form>
-              </div>
+            <div class="btn_top_wrap col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <div class="btn_and_search">
+                    <div class="btn_top">
+                        <a href="<?= Url::toRoute('page/formcontact'); ?>"><i
+                                    class="glyphicon glyphicon-map-marker"></i>Обратная связь</a>
+                        <?php if (!Yii::$app->user->isGuest): ?>
+                            <a href="<?= Url::toRoute('page/lk'); ?>"><i class="glyphicon glyphicon-user"></i>Личный
+                                кабинет (<?= Yii::$app->user->identity['login_user']; ?>)</a>
+                            <a href="<?= Url::toRoute('site/logout'); ?>"><i
+                                        class="glyphicon glyphicon-lock"></i>Выйти</a>
+                        <?php else: ?>
+                            <a href="<?= Url::toRoute('site/login'); ?>"><i
+                                        class="glyphicon glyphicon-lock"></i>Войти</a>
+                            <a href="<?= Url::toRoute('site/registration'); ?>"><i
+                                        class="glyphicon glyphicon-lock"></i>Зарегистрироваться</a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="search_top">
+                        <form action="<?= Yii::$app->urlManager->createUrl(['page/search']) ?>" method="post">
+                            <input placeholder="Поиск" type="text" name="search_text">
+                            <button type="submit" name="submit_search">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="cart_top">
+                    <?php echo \app\components\CartWidget::widget(); ?>
+                </div>
             </div>
-            <div class="cart_top">
-                <?php echo \app\components\CartWidget::widget();?>
-            </div>
-          </div>
         </div>
-      </div>
-      <div class="container-fluid menu_top">
+    </div>
+    <div class="container-fluid menu_top">
         <div class="container">
-          <div class="row">
+            <div class="row">
 
                 <?php
 
-                    NavBar::begin([
-                        'brandUrl' => Yii::$app->homeUrl,
-                        'options' => [
-                            'class' => ' ',
-                        ],
-                    ]);
-                    echo Nav::widget([
-                        'options' => ['class' => 'navbar-nav'],
-                        'items' => [
-                            ['label' => 'Главная', 'url' => ['/site/index']],
-                            ['label' => 'Каталог', 'url' => ['/page/catalog']],
-                            ['label' => 'Новости', 'url' => ['/page/news']],
-                            ['label' => 'Контакты', 'url' => ['/page/contacts']],
-                        ],
-                    ]);
-                    NavBar::end();
-                   
-                    ?>
+                NavBar::begin([
+                    'brandUrl' => Yii::$app->homeUrl,
+                    'options' => [
+                        'class' => ' ',
+                    ],
+                ]);
+                echo Nav::widget([
+                    'options' => ['class' => 'navbar-nav'],
+                    'items' => [
+                        ['label' => 'Главная', 'url' => ['/site/index']],
+                        ['label' => 'Каталог', 'url' => ['/page/catalog']],
+                        ['label' => 'Новости', 'url' => ['/page/news']],
+                        ['label' => 'Контакты', 'url' => ['/page/contacts']],
+                    ],
+                ]);
+                NavBar::end();
 
-          </div>
-        </div>
-      </div>
-    </header>
+                ?>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 contant_wrap">
-                <div class="navigation">
-                    <ul>
-                        <li><a href="<?=Url::toRoute(['site/index']);?>"><i class="glyphicon glyphicon-home"></i></a></li>
-                        <li><a href="<?=Url::toRoute(['site/index']);?>">Системы умного дома</a></li>
-                    </ul>
-                </div>
             </div>
-        </div>
-        <div class="row">
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 catalog">
-                <div class="row content">
-
-                    <?=$content;?>
-
-                </div>
-            </div>
-
         </div>
     </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 contant_wrap">
+            <div class="navigation">
+                <ul>
+                    <li><a href="<?= Url::toRoute(['site/index']); ?>"><i class="glyphicon glyphicon-home"></i></a></li>
+                    <li><a href="<?= Url::toRoute(['site/index']); ?>">Системы умного дома</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 catalog">
+            <div class="row content">
+
+                <?= $content; ?>
+
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <div class="container-fluid write_email_and_sseti">
     <div class="container">
@@ -137,25 +148,29 @@ ProdAsset::register($this);
                 <div class="footer_menu">
                     <h3>Информация</h3>
                     <ul>
-                        <li><a href="<?=Url::toRoute('page/dostavka');?>">Доставка</a></li>
-                        <li><a href="<?=Url::toRoute('page/oplata');?>">Оплата</a></li>
-                        <li><a href="<?=Url::toRoute('page/about');?>">О компании</a></li>
-                        <li><a href="<?=Url::toRoute('page/sale');?>">Скидки</a></li>
+                        <li><a href="<?= Url::toRoute('page/dostavka'); ?>">Доставка</a></li>
+                        <li><a href="<?= Url::toRoute('page/oplata'); ?>">Оплата</a></li>
+                        <li><a href="<?= Url::toRoute('page/about'); ?>">О компании</a></li>
+                        <li><a href="<?= Url::toRoute('page/sale'); ?>">Скидки</a></li>
                     </ul>
                 </div>
                 <div class="footer_menu">
                     <h3>Учетная запись</h3>
                     <ul>
-                        <li><a href="<?=Url::toRoute('page/login');?>">Войти</a></li>
-                        <li><a href="<?=Url::toRoute('page/registration');?>">Зарегистрироваться</a></li>
-                        <li><a href="<?=Url::toRoute('page/cart');?>">Мои заказы</a></li>
-                        <li><a href="<?=Url::toRoute('page/listorder');?>">Список желаний</a></li>
+                        <li><a href="<?= Url::toRoute('site/login'); ?>">Войти</a></li>
+                        <li><a href="<?= Url::toRoute('site/registration'); ?>">Зарегистрироваться</a></li>
+                        <li><a href="<?= Url::toRoute('page/cart'); ?>">Мои заказы</a></li>
+                        <li><a href="<?= Url::toRoute('page/listorder'); ?>">Список желаний</a></li>
+                        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin'): ?>
+                            <li><a href="<?= Url::toRoute('site/admin'); ?>">Панель администратора</a></li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 contacts">
                 <h3>Контакты</h3>
-                <p><i class="glyphicon glyphicon-map-marker"></i>Адрес: пр. Просвещения, 14 г. Санкт-Петербург, 194355</p>
+                <p><i class="glyphicon glyphicon-map-marker"></i>Адрес: пр. Просвещения, 14 г. Санкт-Петербург, 194355
+                </p>
                 <p><i class="glyphicon glyphicon-phone-alt"></i>Служба поддержки: 8 (921) 187-92-52</p>
                 <p><i class="glyphicon glyphicon-envelope"></i>E-mail: sokolovalexandra@icloud.com</p>
             </div>
@@ -169,65 +184,50 @@ ProdAsset::register($this);
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <?php
-    /*
-    NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
+<?php
+/*
+NavBar::begin([
+    'brandLabel' => 'My Company',
+    'brandUrl' => Yii::$app->homeUrl,
+    'options' => [
+        'class' => 'navbar-inverse navbar-fixed-top',
+    ],
+]);
+echo Nav::widget([
+    'options' => ['class' => 'navbar-nav navbar-right'],
+    'items' => [
+        ['label' => 'Home', 'url' => ['/site/index']],
+        ['label' => 'About', 'url' => ['/site/about']],
+        ['label' => 'Contact', 'url' => ['/site/contact']],
+        Yii::$app->user->isGuest ? (
+            ['label' => 'Login', 'url' => ['/site/login']]
+        ) : (
+            '<li>'
+            . Html::beginForm(['/site/logout'], 'post')
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'btn btn-link logout']
             )
-        ],
-    ]);
-    NavBar::end();
-    */
-    ?>
+            . Html::endForm()
+            . '</li>'
+        )
+    ],
+]);
+NavBar::end();
+*/
+?>
 
-        <?/*= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) */?>
-        <?//= $content ?>
+<?= Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+]) ?>
+<? //= $content ?>
 
 
 <?php $this->endBody() ?>
 
 <script>
 
-    $("a.disabled").on('click', function(e){
+    $("a.disabled").on('click', function (e) {
         e.preventDefault();
     })
 
@@ -235,16 +235,16 @@ ProdAsset::register($this);
     var count_prod = Number($(".count_prod").text());
 
 
-    jQuery(".form_count_prod .plus").on("click", function(){
-        if(input_text < count_prod){
+    jQuery(".form_count_prod .plus").on("click", function () {
+        if (input_text < count_prod) {
             input_text = input_text + 1;
             $(".input_text").val(input_text);
         }
 
     })
 
-    jQuery(".form_count_prod .minus").on("click", function(){
-        if(input_text > 1){
+    jQuery(".form_count_prod .minus").on("click", function () {
+        if (input_text > 1) {
             input_text = input_text - 1;
             $(".input_text").val(input_text);
         }
