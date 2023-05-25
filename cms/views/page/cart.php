@@ -6,6 +6,9 @@ use yii\helpers\Url;
 
 <div class="col-lg-12 top_cart_block">
     <div>
+<!--        --><?php //echo '<pre>';
+//        print_r($products);
+//        echo '</pre>';?>
         <p>Состояние корзины</p>
         <p>Товаров в корзине: <?php echo array_sum(array_column($products, 'count_cart'));?></p>
     </div>
@@ -83,6 +86,10 @@ use yii\helpers\Url;
         btn.addEventListener('click', function () {
             if (prod[index]['count'] >= parseInt(valueInputs[index].value) + 1) {
                 valueInputs[index].value = parseInt(valueInputs[index].value) + 1;
+<!--                --><?php //if (Yii::$app->user->isGuest){
+//                $products[]
+//            }
+//                ?>
                 rez[index].textContent = (valueInputs[index].value * parseInt(prod[index]['price'])).toLocaleString().replace(/,/g, " ");
                 rez[index].textContent += " руб";
                 sum += parseInt(prod[index]['price']);
