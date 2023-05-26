@@ -21,11 +21,13 @@ class RegistrationForm extends Model
             [['name_user', 'email_user', 'login_user', 'password_user'], 'required'],
             [['name_user', 'email_user', 'login_user', 'password_user', 'region_user', 'city_user', 'telephone_user'], 'trim'],
             ['email_user', 'email'],
-            ['email_user', 'string', 'max' => 20],
+            ['email_user', 'string', 'max' => 50],
             [['email_user'], 'unique', 'targetClass' => 'app\models\User'],
             [['login_user'], 'unique', 'targetClass' => 'app\models\User', 'message' => 'Этот логин уже занят'],
             ['telephone_user', 'match', 'pattern' => '/[0-9+()-]*$/'],
             ['telephone_user', 'string', 'length' => [10, 15]],
+            ['region_user', 'match', 'pattern' => '/[0-9]*$/'],
+            ['region_user', 'string', 'length' => [5, 15]],
         ];
     }
 

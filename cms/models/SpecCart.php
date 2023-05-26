@@ -15,4 +15,5 @@ class SpecCart extends ActiveRecord
     {
         return $this->hasOne(Cart::class, ['id_cart' => 'id_cart']);
     }
+
 }

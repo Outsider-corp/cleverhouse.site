@@ -608,6 +608,44 @@ a.disabled:hover{
 	margin-left: 5px;
 }
 
+.btn_cart_wrap .btn-order-next{
+	float:right;
+	display: block;
+	padding: 0;
+	background-color: #262626;
+	color:#fff;
+	font-size:14px;
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+
+.radio-list {
+	display: flex;
+	flex-direction: column;
+	font-size: 18px;
+}
+
+.radio-list .radio {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.radio-list .radio input[type="radio"] {
+	margin-right: 5px;
+}
+
+.radio-list .radio label {
+	font-weight: normal;
+	font-size: 18px;
+}
+
+.list-info{
+	font-size: 18px;
+	line-height: 2;
+}
+
 /*Карточка товара*/
 .img_prod img{
 	text-align: center;

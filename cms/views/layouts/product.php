@@ -148,8 +148,8 @@ ProdAsset::register($this);
                 <div class="footer_menu">
                     <h3>Информация</h3>
                     <ul>
-                        <li><a href="<?= Url::toRoute('page/dostavka'); ?>">Доставка</a></li>
-                        <li><a href="<?= Url::toRoute('page/oplata'); ?>">Оплата</a></li>
+                        <li><a href="<?= Url::toRoute('page/dostavka_info'); ?>">Доставка</a></li>
+                        <li><a href="<?= Url::toRoute('page/oplata_info'); ?>">Оплата</a></li>
                         <li><a href="<?= Url::toRoute('page/about'); ?>">О компании</a></li>
                         <li><a href="<?= Url::toRoute('page/sale'); ?>">Скидки</a></li>
                     </ul>

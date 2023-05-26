@@ -2,23 +2,37 @@
 
 use yii\helpers\Url;
 
+$this->title = "Корзина";
+
+$session = Yii::$app->session;
+$session->open();
 ?>
 
 <div class="col-lg-12 top_cart_block">
     <div>
-<!--        --><?php //echo '<pre>';
-//        print_r($products);
-//        echo '</pre>';?>
         <p>Состояние корзины</p>
-        <p>Товаров в корзине: <?php echo array_sum(array_column($products, 'count_cart'));?></p>
+        <p>Товаров в корзине: <?php echo array_sum(array_column($products, 'count_cart')); ?></p>
     </div>
 </div>
 <div class="col-lg-12">
     <ul class="cart_status">
         <li class="active"><span>1. Заказ</span></li>
-        <li><span>2. Адрес</span></li>
-        <li><span>3. Доставка</span></li>
-        <li><span>4. Оплата</span></li>
+        <?php if (count($products) > 0): ?>
+            <li><span><a href="<?= Url::toRoute('page/address') ?>"> 2. Адрес</a></span></li>
+        <?php else: ?>
+            <li><span>2. Адрес</span></li>
+        <?php endif;
+        if (isset($session['order_city'])):?>
+            <li><span><a href="<?= Url::toRoute('page/dostavka') ?>"> 3. Доставка</a></span></li>
+        <?php
+        else:?>
+            <li><span>3. Доставка</span></li>
+        <?php endif;
+        if (isset($session['dostavka'])): ?>
+            <li><span><a href="<?= Url::toRoute('page/checkout') ?>"> 4. Подтверждение</a></span></li>
+        <?php else:?>
+        <li><span>4. Подтверждение</span></li>
+        <?php endif;?>
     </ul>
 </div>
 <div class="col-lg-12">
@@ -36,7 +50,7 @@ use yii\helpers\Url;
             <td class="value_cart">Кол-во</td>
             <td class="rez_price_cart">Стоимость</td>
         </tr>
-
+        <?php $i = 0; ?>
         <?php foreach ($products as $value): ?>
             <tr class="cart_prod_content">
                 <td class="img_cart"><img src="images/<?php echo $value['img_product']; ?>"></td>
@@ -45,13 +59,15 @@ use yii\helpers\Url;
                 <td class="value_cart">
                     <div>
                         <input type="text" class="value_cart_text" value="<?php echo $value['count_cart'] ?>" readonly>
-                        <span class="minus_cart">-</span>
-                        <span class="plus_cart">+</span>
+                        <span class="minus_cart" onclick="minus(<?= $i; ?>)">-</span>
+                        <span class="plus_cart" onclick="<?php
+                        ?>">+</span>
                     </div>
                 </td>
                 <td class="rez_price_cart rez_one"><?php
                     $sum += $value['price'] * $value['count_cart'];
-                    echo number_format($value['price'] * $value['count_cart'], 0, '', ' '); ?> руб
+                    echo number_format($value['price'] * $value['count_cart'], 0, '', ' ');
+                    $i++; ?> руб
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -63,8 +79,9 @@ use yii\helpers\Url;
     </table>
     </div>
     <div class="col-lg-12 btn_cart_wrap">
-        <a href="#" class="btn_cart_im"><i class="glyphicon glyphicon-chevron-left"></i>Продолжить покупки</a>
-        <a href="<?php echo Url::toRoute('page/checkout'); ?>" class="btn_cart_zakaz">Оформить заказ<i
+        <a href="<?= Url::toRoute('site/index') ?>" class="btn_cart_im"><i class="glyphicon glyphicon-chevron-left"></i>Продолжить
+            покупки</a>
+        <a href="<?php echo Url::toRoute('page/address'); ?>" class="btn_cart_zakaz">Оформить заказ<i
                     class="glyphicon glyphicon-chevron-right"></i></a>
     </div>
 <?php endif; ?>
@@ -86,10 +103,6 @@ use yii\helpers\Url;
         btn.addEventListener('click', function () {
             if (prod[index]['count'] >= parseInt(valueInputs[index].value) + 1) {
                 valueInputs[index].value = parseInt(valueInputs[index].value) + 1;
-<!--                --><?php //if (Yii::$app->user->isGuest){
-//                $products[]
-//            }
-//                ?>
                 rez[index].textContent = (valueInputs[index].value * parseInt(prod[index]['price'])).toLocaleString().replace(/,/g, " ");
                 rez[index].textContent += " руб";
                 sum += parseInt(prod[index]['price']);

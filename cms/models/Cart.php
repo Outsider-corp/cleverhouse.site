@@ -11,6 +11,6 @@ class Cart extends ActiveRecord
     }
 
     public function getSpecCarts(){
-        return $this->hasMany(SpecCart::class, ['id_cart' => 'id_cart']);
+        return $this->hasMany(SpecCart::class, ['id_cart' => 'id_cart'])->asArray()->all();
     }
 }

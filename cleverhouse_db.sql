@@ -171,11 +171,11 @@ CREATE TABLE `users` (
   `id_user` int NOT NULL,
   `name_user` varchar(30) NOT NULL,
   `telephone_user` varchar(20) NOT NULL,
-  `email_user` varchar(20) NOT NULL,
+  `email_user` varchar(50) NOT NULL,
   `region_user` varchar(30) DEFAULT NULL,
   `city_user` varchar(30) DEFAULT NULL,
   `login_user` varchar(18) NOT NULL,
-  `password_user` varchar(10) NOT NULL
+  `password_user` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------

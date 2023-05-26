@@ -152,8 +152,8 @@ AppAsset::register($this);
                     <div class="footer_menu">
                         <h3>Информация</h3>
                         <ul>
-                            <li><a href="<?= Url::toRoute('page/dostavka'); ?>">Доставка</a></li>
-                            <li><a href="<?= Url::toRoute('page/oplata'); ?>">Оплата</a></li>
+                            <li><a href="<?= Url::toRoute('page/dostavka_info'); ?>">Доставка</a></li>
+                            <li><a href="<?= Url::toRoute('page/oplata_info'); ?>">Оплата</a></li>
                             <li><a href="<?= Url::toRoute('page/about'); ?>">О компании</a></li>
                             <li><a href="<?= Url::toRoute('page/sale'); ?>">Скидки</a></li>
                         </ul>
@@ -163,7 +163,7 @@ AppAsset::register($this);
                         <ul>
                             <li><a href="<?= Url::toRoute('site/login'); ?>">Войти</a></li>
                             <li><a href="<?= Url::toRoute('site/registration'); ?>">Зарегистрироваться</a></li>
-                            <li><a href="<?= Url::toRoute('page/cart'); ?>">Мои заказы</a></li>
+                            <li><a href="<?= Url::toRoute('page/listorder'); ?>">Мои заказы</a></li>
                             <li><a href="<?= Url::toRoute('page/listorder'); ?>">Список желаний</a></li>
                             <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin'):?>
                                 <li><a href="<?= Url::toRoute('site/admin'); ?>">Панель администратора</a></li>

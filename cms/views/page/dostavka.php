@@ -1,12 +1,58 @@
-<h3>Доставка</h3>
-<p class="about">
-    Наш основной склад расположен в Санкт-Петербурге, что позволяет нам быстро обрабатывать и отправлять заказы по всей
-    России. Мы сотрудничаем с надежными и проверенными логистическими партнерами, чтобы уверенно осуществлять доставку в
-    любой уголок страны.</p>
-<p class="about">
-    Мы стремимся к максимальной оперативности в обработке заказов, и в большинстве случаев, после оформления заказа,
-    доставка осуществляется в течение 2-5 рабочих дней.
-    Мы уделяем особое внимание упаковке, чтобы ваши товары прибыли в безопасности и в идеальном состоянии. Кроме того,
-    мы предоставляем гибкие варианты доставки, включая курьерскую доставку, службы экспресс-доставки и почтовые услуги,
-    чтобы соответствовать вашим индивидуальным потребностям.</p>
-<p class="about">Доставка возможна почтой России, компаниями CDEK, Boxberry, Pickpoint, а также курьерской службой.</p>
+<?php
+
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\bootstrap\ActiveForm;
+
+/* @var $this yii\web\View */
+
+$this->title = "Вид доставки и оплаты";
+
+$session = Yii::$app->session;
+$session->open();
+?>
+
+<div class="col-lg-12">
+    <ul class="cart_status">
+        <li><span><a href="<?= Url::toRoute('page/cart') ?>"> 1. Заказ</a></span></li>
+        <li><span><a href="<?= Url::toRoute('page/address') ?>"> 2. Адрес</a></span></li>
+        <li class="active"><span>3. Доставка</span></li>
+        <?php
+        if (isset($session['dostavka'])): ?>
+            <li><span><a href="<?= Url::toRoute('page/checkout') ?>"> 4. Подтверждение</a></span></li>
+        <?php else: ?>
+            <li><span>4. Подтверждение</span></li>
+        <?php endif; ?>
+    </ul>
+</div>
+
+<?php
+$form = ActiveForm::begin([
+    'id' => 'form',
+    'method' => 'post',]); ?>
+<div class="row equal-height">
+    <div class="col-md-6">
+        <?= $form->field($model, 'attribute', ['template' => "<h3>{label}</h3>\n<div class='radio-list'>{input}</div>\n{error}",])->radioList([
+            'Почта' => 'Почта России',
+            'CDEK' => 'CDEK',
+            'Boxberry' => 'Boxberry',
+            'Pickpoint' => 'Pickpoint',
+            'Курьер' => 'Курьером',
+        ], ['itemOptions' => ['labelOptions' => ['class' => 'radio']]]); ?>
+    </div>
+    <div class="col-md-6">
+        <?= $form->field($model, 'oplata', ['template' => "<h3>{label}</h3>\n<div class='radio-list'>{input}</div>\n{error}",])->radioList([
+            'Карта' => 'Банковская карта',
+            'Перевод' => 'Перевод через СБП',
+            'Наличные' => 'Наличными при получении',
+        ], ['itemOptions' => ['labelOptions' => ['class' => 'radio']]]); ?>
+    </div>
+    <div class="col-lg-12 btn_cart_wrap">
+        <a href="<?= Url::toRoute('page/cart') ?>" class="btn_cart_im"><i class="glyphicon glyphicon-chevron-left"></i>Вернуться
+            к заказу</a>
+        <?= Html::a('Далее <i class="glyphicon glyphicon-chevron-right"></i>',
+            '#', ['class' => 'btn_cart_zakaz', 'onclick' => '$("#form").yiiActiveForm("validate", true);
+             if ($("#form").yiiActiveForm("validated")) $("#form").submit(); return false;']); ?>
+
+    </div>
+    <?php ActiveForm::end(); ?>

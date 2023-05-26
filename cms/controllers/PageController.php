@@ -3,9 +3,14 @@
 namespace app\controllers;
 
 use app\models\Cart;
+use app\models\ContactForm;
+use app\models\AddressForm;
+use app\models\DostavkaForm;
 use app\models\FilterForm;
+use app\models\Order;
 use app\models\SpecCart;
 use Yii;
+use yii\db\Exception;
 use yii\db\Expression;
 use yii\filters\AccessControl;
 use app\models\SortForm;
@@ -310,7 +315,21 @@ class PageController extends Controller
     public
     function actionFormcontact()
     {
-        return $this->render('formcontact');
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+            if ($model->sendEmail($model->email)) {
+                // Успешно отправлено
+                Yii::$app->session->setFlash('success', 'Ваше сообщение успешно отправлено.');
+            } else {
+                // Ошибка при отправке
+                Yii::$app->session->setFlash('error', 'Произошла ошибка при отправке сообщения.');
+            }
+
+            return $this->refresh(); // Перенаправление на ту же страницу
+        }
+
+        return $this->render('formcontact', compact('model'));
     }
 
     /**
@@ -322,22 +341,16 @@ class PageController extends Controller
         return $this->render('lk');
     }
 
-    /**
-     * Для страницы Доставка
-     */
     public
-    function actionDostavka()
+    function actionOplata_info()
     {
-        return $this->render('dostavka');
+        return $this->render('oplata_info');
     }
 
-    /**
-     * Для страницы Оплата
-     */
     public
-    function actionOplata()
+    function actionDostavka_info()
     {
-        return $this->render('oplata');
+        return $this->render('dostavka_info');
     }
 
     /**
@@ -359,15 +372,6 @@ class PageController extends Controller
     }
 
     /**
-     * Для страницы Карта сайта
-     */
-    public
-    function actionSitemap()
-    {
-        return $this->render('sitemap');
-    }
-
-    /**
      * Для страницы корзина
      */
     public
@@ -377,7 +381,7 @@ class PageController extends Controller
         $productId = Yii::$app->request->get('id');
         if ($productId !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT))
             $product = Products::findOne($productId);
-            $addition = true;
+        $addition = true;
         $count_add = Yii::$app->request->get('count');
         if ($count_add === null || !filter_var($count_add, FILTER_VALIDATE_INT)) {
             $count_add = 1;
@@ -406,31 +410,7 @@ class PageController extends Controller
                 }
                 $specCart->save();
             }
-
-            $specCartItems = SpecCart::find()
-                ->select(['id_product', 'count'])
-                ->where(['id_cart' => $cart->id_cart])
-                ->asArray()
-                ->all();
-
-            $products = [];
-            foreach ($specCartItems as $item) {
-                $productId = $item['id_product'];
-                $count = $item['count'];
-                $product = Products::findOne($productId);
-                if ($product !== null) {
-                    $products[] = [
-                        'id' => $productId,
-                        'name_product' => $product->name_product,
-                        'price' => $product->price,
-                        'description' => $product->description,
-                        'count' => $product->count,
-                        'id_category' => $product->id_category,
-                        'img_product' => $product->img_product,
-                        'count_cart' => $count,
-                    ];
-                }
-            }
+            $products = $this->UserCartInfo($userId);
         } else {
 
             $session = Yii::$app->session;
@@ -444,8 +424,8 @@ class PageController extends Controller
             }
             if (isset($product) and isset($count_add)) {
                 if (isset($productsSession[$productId])) {
-                    if ( $productsSession[$productId]['count'] >= $productsSession[$productId]['count_cart'] + $count_add)
-                    $productsSession[$productId]['count_cart'] += $count_add;
+                    if ($productsSession[$productId]['count'] >= $productsSession[$productId]['count_cart'] + $count_add)
+                        $productsSession[$productId]['count_cart'] += $count_add;
                 } else {
                     $productsSession[$productId] = [
                         'id' => $productId,
@@ -458,22 +438,131 @@ class PageController extends Controller
                         'count_cart' => $count_add,
                     ];
                 }
-                $products = array_values($productsSession);
             }
-
+            $products = array_values($productsSession);
             $session->set('productsSession', $productsSession);
         }
         return $this->render('cart', compact('products'));
     }
 
-    /**
-     * Авторизация и регистрация (адрес)
-     */
+    private function UserCartInfo($userId)
+    {
+        $cart = Cart::findOne(['id_user' => $userId]);
+        $specCartItems = SpecCart::find()
+            ->select(['id_product', 'count'])
+            ->where(['id_cart' => $cart->id_cart])
+            ->asArray()
+            ->all();
+        $products = [];
+        foreach ($specCartItems as $item) {
+            $productId = $item['id_product'];
+            $count = $item['count'];
+            $product = Products::findOne($productId);
+            if ($product !== null) {
+                $products[] = [
+                    'id' => $productId,
+                    'name_product' => $product->name_product,
+                    'price' => $product->price,
+                    'description' => $product->description,
+                    'count' => $product->count,
+                    'id_category' => $product->id_category,
+                    'img_product' => $product->img_product,
+                    'count_cart' => $count,
+                ];
+            }
+        }
+        return $products;
+    }
 
+    public
+    function actionAddress()
+    {
+        $model = new AddressForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $session = Yii::$app->session;
+            $session->open();
+            $session->set('order_city', $model->city);
+            $session->set('order_address', $model->address);
+            $session->set('order_region', $model->region);
+            return $this->redirect(['page/dostavka']);
+        }
+
+        return $this->render('address', compact('model'));
+    }
+
+    public
+    function actionDostavka()
+    {
+        $session = Yii::$app->session;
+        $session->open();
+        if (!isset($session['order_city']))
+            return $this->redirect(['page/cart']);
+        $model = new DostavkaForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+//            $session['dostavka'] = $model->attribute;
+            $session->set('dostavka', $model->attribute);
+            $session->set('oplata', $model->oplata);
+            return $this->redirect(['page/checkout']);
+        }
+        return $this->render('dostavka', compact('model'));
+    }
+
+    /**
+     * Для страницы Оплата
+     */
     public
     function actionCheckout()
     {
-        return $this->render('checkout');
+        $session = Yii::$app->session;
+        $session->open();
+        if (!isset($session['dostavka']))
+            return $this->redirect(['page/cart']);
+        $userId = Yii::$app->user->id;
+        $products = $this->UserCartInfo($userId);
+
+        return $this->render('checkout', compact('products'));
+    }
+
+    public function actionOrder()
+    {
+        $session = Yii::$app->session;
+        $session->open();
+        if (!isset($session['dostavka']))
+            return $this->redirect(['site/index']);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $userId = Yii::$app->user->id;
+            $cart = Cart::findOne(['id_user' => $userId]);
+            $order = new Order();
+            $order->id_user = $userId;
+            $order->date_order = date('Y-m-d H:i:s');
+            $order->id_cart = $cart->id_cart;
+            $order->type_payment = $session['oplata'];
+            $order->type_delivery = $session['dostavka'];
+            $order->city = $session['order_city'];
+            $order->address = $session['order_address'];
+            $order->region = $session['order_region'];
+            $order->save();
+            $cart->id_user = null;
+            $cart->save();
+            $specCarts = $cart->getSpecCarts();
+            foreach ($specCarts as $specCart) {
+                $product = Products::findOne($specCart['id_product']);
+                $product->count -= $specCart['count'];
+                $product->save();
+            }
+            $session->remove('oplata');
+            $session->remove('dostavka');
+            $session->remove('productsSession');
+            $session->remove('order_city');
+            $session->remove('order_address');
+            $session->remove('order_region');
+            $transaction->commit();
+            return $this->render('order', compact('order'));
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return $this->render('order', compact('e'));
+        }
     }
 
     /**
@@ -482,7 +571,29 @@ class PageController extends Controller
     public
     function actionListorder()
     {
-        return $this->render('listorder');
+        if (!Yii::$app->user->isGuest) {
+            $userId = Yii::$app->user->id;
+            $orders_raw = Order::find()->where(['id_user' => $userId])->asArray()->all();
+            $orders = [];
+            foreach ($orders_raw as $order) {
+                $cart = Cart::findOne(['id_cart' => $order['id_cart']]);
+                $orders[$order['id_order']] = [];
+                $specCarts = SpecCart::find()->where(['id_cart' => $cart])->asArray()->all();
+                $sum = 0;
+                foreach ($specCarts as $specCart) {
+                    $product = Products::findOne($specCart['id_product']);
+                    $orders[$order['id_order']][$specCart['id_product']] = [
+                        'name_product' => $product->name_product,
+                        'count' => $specCart['count'],
+                    ];
+                    $sum += $product['price'] * $specCart['count'];
+                }
+                $orders[$order['id_order']]['sum'] = $sum;
+                $orders[$order['id_order']]['date'] = $order['date_order'];
+            }
+            return $this->render('listorder', compact('orders'));
+        }
+        return $this->redirect(['site/index']);
     }
 
 

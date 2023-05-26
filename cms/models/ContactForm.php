@@ -10,7 +10,6 @@ use yii\base\Model;
  */
 class ContactForm extends Model
 {
-    public $name;
     public $email;
     public $subject;
     public $body;
@@ -23,12 +22,14 @@ class ContactForm extends Model
     public function rules()
     {
         return [
-            // name, email, subject and body are required
-            [['name', 'email', 'subject', 'body'], 'required'],
-            // email has to be a valid email address
+            [['email', 'subject', 'body'], 'trim'],
+            ['email', 'required', 'message' => 'Вы не ввели E-mail, на который придёт ответ'],
+            ['subject', 'required', 'message' => 'Введите тему обращения'],
+            ['body', 'required', 'message' => 'Введите текст письма'],
             ['email', 'email'],
-            // verifyCode needs to be entered correctly
-            ['verifyCode', 'captcha'],
+            ['email', 'string', 'max' => 50],
+            ['subject', 'string', 'max' => 100],
+//            ['verifyCode', 'captcha'],
         ];
     }
 
@@ -38,7 +39,7 @@ class ContactForm extends Model
     public function attributeLabels()
     {
         return [
-            'verifyCode' => 'Verification Code',
+//            'verifyCode' => 'Verification Code',
         ];
     }
 
@@ -47,14 +48,21 @@ class ContactForm extends Model
      * @param string $email the target email address
      * @return bool whether the model passes validation
      */
-    public function contact($email)
+    public function sendEmail($email)
     {
         if ($this->validate()) {
             Yii::$app->mailer->compose()
-                ->setTo($email)
-                ->setFrom([$this->email => $this->name])
-                ->setSubject($this->subject)
+                ->setTo('cleverhouse@internet.ru')
+                ->setFrom('cleverhouse@internet.ru')
+                ->setSubject($this->subject . " от " . $this->email)
                 ->setTextBody($this->body)
+                ->send();
+            $text = "Спасибо за обратную связь, мы Вам ответим в ближайшее время. \n Текст Вашего письма:\n" . $this->body;
+            Yii::$app->mailer->compose()
+                ->setTo($email)
+                ->setFrom('cleverhouse@internet.ru')
+                ->setSubject($this->subject)
+                ->setTextBody($text)
                 ->send();
 
             return true;
