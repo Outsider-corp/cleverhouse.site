@@ -1021,6 +1021,22 @@ a.disabled:hover{
 	font-size: 1.2em;
 }
 
+.lk_buttons{
+	text-align: center;
+	font-size: 20px;
+	text-decoration: none;
+	color: rgb(255, 255, 255);
+}
+.lk_buttons:hover{
+	text-decoration: none;
+}
+.lk_table{
+	background-color: #fd5a23;
+}
+.lk_table:hover{
+	background-color: #333333;
+}
+
 @media all and (max-width: 1200px) and (min-width: 992px){
 	.ban_block p {
 	    color: #fff;

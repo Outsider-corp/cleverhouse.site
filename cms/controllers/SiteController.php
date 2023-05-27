@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\SpecWishlist;
+use app\models\Wishlist;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -67,6 +69,13 @@ class SiteController extends Controller
     {
         $this->layout = 'main';
         $product_array = Products::find()->asArray()->all();
+        if (!Yii::$app->user->isGuest){
+            $userId = Yii::$app->user->id;
+            $wish = Wishlist::findOne(['id_user'=>$userId]);
+            foreach ($product_array as $key=>$product) {
+                $product_array[$key]['wishlist'] = SpecWishlist::find()
+                    ->where(['id_wishlist'=>$wish->id_wishlist, 'id_product'=>$product['id']])->count();
+            }}
 
         return $this->render('index', compact('product_array'));
     }

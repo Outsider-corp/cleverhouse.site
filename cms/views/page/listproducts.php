@@ -161,8 +161,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                                        class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
                                 <?php endif; ?>
                                 <a href="
-                    <?= Url::toRoute(['page/listorder', 'id' => $product_array['id']]);
-                                ?>" class="mylist">Список желаний</a>
+                    <?= Url::toRoute(['page/listwishes', 'id' => $product_array['id']]);
+                                ?>" class="mylist">В список желаний</a>
                             </div>
                         </div>
                     </div>
@@ -192,16 +192,23 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                                         number_format($product_array['price_old'], 0, '', ' ') ?> руб</span>
                                 <?php endif; ?>
                             </div>
+                            <?php if (!Yii::$app->user->isGuest):?>
                             <div class="product_btn">
                                 <?php if ($product_array['count'] == 0): ?>
                                     <a class="cart disabled"><i class="glyphicon glyphicon-shopping-cart disabled"></i></a>
                                 <?php else: ?>
                                     <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>"
                                        class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
-                                <?php endif; ?>
-                                <a href="<?= Url::toRoute(['page/listorder', 'id' => $product_array['id']]); ?>"
-                                   class="mylist">Список желаний</a>
+                                <?php endif;
+                                if ($product_array['wishlist'] > 0):?>
+                                    <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action'=>'del']); ?>"
+                                   class="mylist">Уже в списке желаний</a>
+                                <?php else:?>
+                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action'=>'add']); ?>"
+                                   class="mylist">В список желаний</a>
+                                <?php endif;?>
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

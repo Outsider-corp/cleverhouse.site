@@ -18,8 +18,8 @@ $this->title = "Личный кабинет";
 </div>
 <table class="table table-bordered" style="text-align: center;">
     <tr>
-        <td><a href="<?= Url::toRoute('page/listorder') ?>">Заказы</a></td>
-        <td><a href="<?= Url::toRoute('page/listwishes') ?>">Список желаний</a></td>
-        <td><a href="<?= Url::toRoute('page/listreviews') ?>">Оставленные отзывы</a></td>
+        <td class="lk_table"><a href="<?= Url::toRoute('page/listorder') ?>" class="lk_buttons">Заказы</a></td>
+        <td class="lk_table"><a href="<?= Url::toRoute('page/listwishes') ?>" class="lk_buttons">Список желаний</a></td>
+        <td class="lk_table"><a href="<?= Url::toRoute('page/listreviews') ?>" class="lk_buttons">Оставленные отзывы</a></td>
     </tr>
 </table>

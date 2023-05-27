@@ -159,11 +159,12 @@ ProdAsset::register($this);
                     <ul>
                         <li><a href="<?= Url::toRoute('site/login'); ?>">Войти</a></li>
                         <li><a href="<?= Url::toRoute('site/registration'); ?>">Зарегистрироваться</a></li>
-                        <li><a href="<?= Url::toRoute('page/cart'); ?>">Мои заказы</a></li>
-                        <li><a href="<?= Url::toRoute('page/listorder'); ?>">Список желаний</a></li>
-                        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin'): ?>
+                        <?php if (!Yii::$app->user->isGuest):?>
+                        <li><a href="<?= Url::toRoute('page/listorder'); ?>">Мои заказы</a></li>
+                        <li><a href="<?= Url::toRoute('page/listwishes'); ?>">Список желаний</a></li>
+                        <?php if (Yii::$app->user->identity->login_user === 'admin'): ?>
                             <li><a href="<?= Url::toRoute('site/admin'); ?>">Панель администратора</a></li>
-                        <?php endif; ?>
+                        <?php endif; endif; ?>
                     </ul>
                 </div>
             </div>

@@ -6,7 +6,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 
-$this->title = "Интеренет-магазин";
+$this->title = $title;
 
 $this->registerMetaTag(['name' => 'keywords', 'content' => 'техника, умный дом, интернет вещей']);
 $this->registerMetaTag(['name' => 'description', 'content' => 'системы умного дома']);
@@ -48,7 +48,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
 
                     <?php $form = ActiveForm::begin(['action' => ['page/search', 'view' => $view,
                         'search_text' => $search_text, 'price_from' => $price_from, 'price_to' => $price_to,
-                        'value'=>$value]]); ?>
+                        'value' => $value]]); ?>
                     <p><strong>Сортировка по:</strong><?= $form->field($model, 'str')->dropDownList([
                             '0' => 'Цене, по возрастанию',
                             '1' => 'Цене, по убыванию',
@@ -81,12 +81,12 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
 
                         <a href="
         <?= Url::toRoute(['page/search', 'str' => $str, 'number' => $number, 'search_text' => $search_text,
-                            'price_from' => $price_from, 'price_to' => $price_to, 'value'=>$value]); ?>"
+                            'price_from' => $price_from, 'price_to' => $price_to, 'value' => $value]); ?>"
                            class="
         <?= $class1; ?>"><i class="glyphicon glyphicon-th"></i><span>Сетка</span></a>
                         <a href="
         <?= Url::toRoute(['page/search', 'view' => '1', 'str' => $str, 'number' => $number, 'search_text' => $search_text,
-                            'price_from' => $price_from, 'price_to' => $price_to, 'value'=>$value]); ?>"
+                            'price_from' => $price_from, 'price_to' => $price_to, 'value' => $value]); ?>"
                            class="
         <?= $class2; ?>"><i class="glyphicon glyphicon-th-list"></i><span>Список</span></a>
 
@@ -152,8 +152,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                     <?= Url::toRoute(['page/cart', 'id' => $product_array['id']]);
                                 ?>" class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
                                 <a href="
-                    <?= Url::toRoute(['page/listorder', 'id' => $product_array['id']]);
-                                ?>" class="mylist">Список желаний</a>
+                    <?= Url::toRoute(['page/listwishes', 'id' => $product_array['id']]);
+                                ?>" class="mylist">В список желаний</a>
                             </div>
                         </div>
                     </div>
@@ -183,16 +183,23 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                                         number_format($product_array['price_old'], 0, '', ' ') ?> руб</span>
                                 <?php endif; ?>
                             </div>
-                            <div class="product_btn">
-                                <?php if ($product_array['count'] == 0): ?>
-                                    <a class="cart disabled"><i class="glyphicon glyphicon-shopping-cart disabled"></i></a>
-                                <?php else: ?>
-                                    <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>"
-                                       class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
-                                <?php endif; ?>
-                                <a href="<?= Url::toRoute(['page/listorder', 'id' => $product_array['id']]); ?>"
-                                   class="mylist">Список желаний</a>
-                            </div>
+                            <?php if (!Yii::$app->user->isGuest):?>
+                                <div class="product_btn">
+                                    <?php if ($product_array['count'] == 0): ?>
+                                        <a class="cart disabled"><i class="glyphicon glyphicon-shopping-cart disabled"></i></a>
+                                    <?php else: ?>
+                                        <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>"
+                                           class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
+                                    <?php endif;
+                                    if ($product_array['wishlist'] > 0):?>
+                                        <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action'=>'del']); ?>"
+                                           class="mylist">Уже в списке желаний</a>
+                                    <?php else:?>
+                                        <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action'=>'add']); ?>"
+                                           class="mylist">В список желаний</a>
+                                    <?php endif;?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -222,7 +229,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                             <li><a href="
         <?= Url::toRoute(['page/search', 'page' => $i, 'view' => 1, 'number' => $number, 'str' => $str,
                                     'search_text' => $search_text, 'price_from' => $price_from,
-                                    'price_to' => $price_to, 'value'=>$value]);
+                                    'price_to' => $price_to, 'value' => $value]);
                                 ?>">
                                     <?php echo $i;
                                     ?></a></li>
@@ -230,7 +237,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                             ?>
                             <li><a href="
         <?= Url::toRoute(['page/search', 'page' => $i, 'number' => $number, 'str' => $str, 'search_text' => $search_text,
-                                    'price_from' => $price_from, 'price_to' => $price_to, 'value'=>$value]);
+                                    'price_from' => $price_from, 'price_to' => $price_to, 'value' => $value]);
                                 ?>">
                                     <?php echo $i;
                                     ?></a></li>

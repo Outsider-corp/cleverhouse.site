@@ -33,20 +33,19 @@ $this->title = 'Карточка товара';
     </div>
 </div>
 
-<div class="col-lg-3 col-md-8 col-sm-7 col-sm-offset--5 col-xs-12">
-    <div class="order_prod">
-        <p class="price_prod"><?php echo number_format($product_array['price'], 0, '', ' '); ?> руб</p>
-
+<div class="col-lg-3 col-md-8 col-sm-7 col-sm-offset--5 col-xs-12 order_prod">
+    <h2>Цена</h2>
+    <p class="price_prod"><?php echo number_format($product_array['price'],
+                0, '', ' '); ?> руб</p>
         <?php
         if (!empty($product_array['price_old'])):
             ?>
-            <p class="price_old_prod"><?php echo number_format($product_array['price_old'], 0, '', ' '); ?> руб</p>
+            <p class="price_old_prod"><?php echo number_format($product_array['price_old'],
+                    0, '', ' '); ?> руб</p>
         <?php
         endif;
-        ?>
-
-        <?php
         $class = "";
+        if (!Yii::$app->user->isGuest):
         if ($product_array['count'] > 0):
             ?>
             <p>Количество:</p>
@@ -55,18 +54,22 @@ $this->title = 'Карточка товара';
                 <button type="button" class="minus">-</button>
                 <button type="button" class="plus">+</button>
             </form>
-            <a href="<?= Url::toRoute(['page/cart', 'id'=>$product_array['id']]); ?>" class="add_cart_prod"><i
-                        class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
+            <div><a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>" class="add_cart_prod"><i
+                            class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
         <?php else: ?>
-            <p>Нет в наличии</p>
-            <a class="add_cart_prod disabled"><i class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
-        <?php
-        endif;
-        ?>
-        <a href="#" class="add_mylist_prod"><i class="glyphicon glyphicon-heart"></i>В список
-            желаний</a>
+        <p>Нет в наличии</p>
+        <a class="add_cart_prod disabled"><i class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
+            <?php
+            endif;
+            if ($product_array['wishlist'] > 0):?>
+                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'del']); ?>"
+                   class="mylist">Уже в списке желаний</a>
+            <?php else: ?>
+                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'add']); ?>"
+                   class="mylist">В список желаний</a>
+            <?php endif; endif; ?>
+        </div>
     </div>
-</div>
 
 <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
     <div class="h_prod">
