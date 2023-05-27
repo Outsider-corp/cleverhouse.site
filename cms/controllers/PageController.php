@@ -2,14 +2,20 @@
 
 namespace app\controllers;
 
+use app\models\AddCategoryForm;
+use app\models\AddProductForm;
 use app\models\Cart;
+use app\models\Characteristics;
 use app\models\ContactForm;
 use app\models\AddressForm;
 use app\models\DostavkaForm;
 use app\models\FilterForm;
 use app\models\Order;
+use app\models\ReviewForm;
+use app\models\Reviews;
 use app\models\SpecCart;
 use app\models\SpecWishlist;
+use app\models\User;
 use app\models\Wishlist;
 use Yii;
 use yii\db\Exception;
@@ -87,33 +93,37 @@ class PageController extends Controller
                 switch ($str) {
                     case 0:
                         $products_array = $this->selectListProd($id, ['price' => SORT_ASC], $number,
-                            $page, $price_from, $price_to, $value);
+                            $page, $price_from, $price_to);
                         break;
                     case 1:
                         $products_array = $this->selectListProd($id, ['price' => SORT_DESC], $number,
-                            $page, $price_from, $price_to, $value);
+                            $page, $price_from, $price_to);
                         break;
                     case 2:
                         $products_array = $this->selectListProd($id, ['name_product' => SORT_ASC], $number,
-                            $page, $price_from, $price_to, $value);
+                            $page, $price_from, $price_to);
                         break;
                     case 3:
                         $products_array = $this->selectListProd($id, ['name_product' => SORT_DESC], $number,
-                            $page, $price_from, $price_to, $value);
+                            $page, $price_from, $price_to);
                         break;
                     default:
                         $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page,
-                            $price_from, $price_to, $value);
+                            $price_from, $price_to);
                         break;
                 }
             }
-            if (!Yii::$app->user->isGuest){
-            $userId = Yii::$app->user->id;
-            $wish = Wishlist::findOne(['id_user'=>$userId]);
-            foreach ($products_array as $key=>$product) {
-                $products_array[$key]['wishlist'] = SpecWishlist::find()
-                    ->where(['id_wishlist'=>$wish->id_wishlist, 'id_product'=>$product['id']])->count();
-            }}
+            if (!Yii::$app->user->isGuest) {
+                $userId = Yii::$app->user->id;
+                $wish = Wishlist::findOne(['id_user' => $userId]);
+                foreach ($products_array as $key => $product) {
+                    $products_array[$key]['wishlist'] = SpecWishlist::find()
+                        ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product['id']])->count();
+                }
+            }
+            foreach ($products_array as $key => $product) {
+                $products_array[$key]['chars'] = Characteristics::find()->where(['id_product' => $product['id']])->asArray()->all();
+            }
             $count_products = count(Products::find()->where(['id_category' => $id])
                 ->andWhere(['>=', 'price', $price_from])
                 ->andWhere(['<=', 'price', $price_to])->asArray()->all());
@@ -133,16 +143,21 @@ class PageController extends Controller
     }
 
     private
-    function selectListProd($id, $field_sort, $limit, $start, $price_from, $price_to, $value)
+    function selectListProd($id, $field_sort, $limit, $start, $price_from, $price_to)
     {
         if ($start == 1)
             $start = 0;
         else
             $start = ($start - 1) * $limit;
-        return Products::find()->where(['id_category' => $id])->
-        andWhere(['>=', 'price', $price_from])->
-        andWhere(['<=', 'price', $price_to])->
-        asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
+        if (isset($price_from) && isset($price_to)):
+            return Products::find()->where(['id_category' => $id])->
+            andWhere(['>=', 'price', $price_from])->
+            andWhere(['<=', 'price', $price_to])->
+            asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
+        else:
+            return Products::find()->where(['id_category' => $id])->
+            asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
+        endif;
     }
 
     private
@@ -243,13 +258,17 @@ class PageController extends Controller
                             $price_from, $price_to, $value);
                         break;
                 }
-                if (!Yii::$app->user->isGuest){
+                if (!Yii::$app->user->isGuest) {
                     $userId = Yii::$app->user->id;
-                    $wish = Wishlist::findOne(['id_user'=>$userId]);
-                    foreach ($products_array as $key=>$product) {
+                    $wish = Wishlist::findOne(['id_user' => $userId]);
+                    foreach ($products_array as $key => $product) {
                         $products_array[$key]['wishlist'] = SpecWishlist::find()
-                            ->where(['id_wishlist'=>$wish->id_wishlist, 'id_product'=>$product['id']])->count();
-                    }}
+                            ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product['id']])->count();
+                    }
+                }
+                foreach ($products_array as $key => $product) {
+                    $products_array[$key]['chars'] = Characteristics::find()->where(['id_product' => $product['id']])->asArray()->all();
+                }
                 $count_products = count(Products::find()->where(['like', 'name_product', '%' . $search_text . '%', false])->
                 andWhere(['>=', 'price', $price_from])->
                 andWhere(['<=', 'price', $price_to])->all());
@@ -282,14 +301,32 @@ class PageController extends Controller
         if (!is_array($product_array) || count($product_array) < 0) {
             throw new NotAcceptableHttpException;
         }
+        $product_array['chars'] = Characteristics::find()->where(['id_product' => $product_array['id']])->asArray()->all();
         if (!Yii::$app->user->isGuest) {
             $wish = Wishlist::findOne(['id_user' => Yii::$app->user->id]);
             $product_array['wishlist'] = SpecWishlist::find()
                 ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product_array['id']])
                 ->count();
+            $reviewModel = new ReviewForm();
+            if ($reviewModel->load(Yii::$app->request->post()) && $reviewModel->validate()) {
+                if ($reviewModel->text != "") {
+                    $review = new Reviews();
+                    $review->text_review = $reviewModel->text;
+                    $review->rating = $reviewModel->rating;
+                    $review->id_user = Yii::$app->user->id;
+                    $review->id_product = $id;
+                    $review->date = date('Y-m-d H:i:s');
+                    $review->save();
+                }
+            }
+            $reviewModel->reset();
+            $product_array['reviews'] = array_reverse(Reviews::find()->where(['id_product' => $id])->asArray()->all());
+            foreach ($product_array['reviews'] as $key => $review) {
+                $product_array['reviews'][$key]['name_user'] = User::findOne($review['id_user'])->name_user;
+            }
         }
 
-        return $this->render('product', compact('product_array', 'id'));
+        return $this->render('product', compact('product_array', 'id', 'reviewModel'));
     }
 
     public
@@ -350,36 +387,31 @@ class PageController extends Controller
     }
 
     public
-    function actionSale()
-    {
-        return $this->render('sale');
-    }
-
-    public
     function actionCart()
     {
-        $products = [];
-        $productId = Yii::$app->request->get('id');
-        if ($productId !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT))
-            $product = Products::findOne($productId);
-        $addition = true;
-        $count_add = Yii::$app->request->get('count');
-        if ($count_add === null || !filter_var($count_add, FILTER_VALIDATE_INT)) {
-            $count_add = 1;
-        } else if ($count_add > $product['count']) {
-            $count_add = null;
-        }
         if (!Yii::$app->user->isGuest) {
+            $products = [];
+            $productId = Yii::$app->request->get('id');
+            if ($productId !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT))
+                $product = Products::findOne($productId);
+            $count_add = Yii::$app->request->get('count');
+            if ($count_add === null || !filter_var($count_add, FILTER_VALIDATE_INT)) {
+                $count_add = 1;
+            } else if ($count_add > $product['count']) {
+                $count_add = null;
+            }
             $userId = Yii::$app->user->id;
             $cart = Cart::findOne(['id_user' => $userId]);
-            if ($cart === null) {
+            if (!isset($cart)) {
                 $cart = new Cart();
                 $cart->id_user = $userId;
                 $cart->save();
             }
             if (isset($product) and isset($count_add)) {
                 $specCart = SpecCart::findOne(['id_cart' => $cart->id_cart, 'id_product' => $productId]);
-                if ($specCart === null) {
+                echo $specCart['id_product'];
+                echo 123;
+                if (!isset($specCart)) {
                     $specCart = new SpecCart();
                     $specCart->id_cart = $cart->id_cart;
                     $specCart->id_product = $productId;
@@ -392,38 +424,10 @@ class PageController extends Controller
                 $specCart->save();
             }
             $products = $this->UserCartInfo($userId);
+            return $this->render('cart', compact('products'));
         } else {
-
-            $session = Yii::$app->session;
-//        $session->destroy();
-            $session->open();
-
-            if ($session->has('productsSession')) {
-                $productsSession = $session->get('productsSession');
-            } else {
-                $productsSession = array();
-            }
-            if (isset($product) and isset($count_add)) {
-                if (isset($productsSession[$productId])) {
-                    if ($productsSession[$productId]['count'] >= $productsSession[$productId]['count_cart'] + $count_add)
-                        $productsSession[$productId]['count_cart'] += $count_add;
-                } else {
-                    $productsSession[$productId] = [
-                        'id' => $productId,
-                        'name_product' => $product->name_product,
-                        'price' => $product->price,
-                        'description' => $product->description,
-                        'count' => $product->count,
-                        'id_category' => $product->id_category,
-                        'img_product' => $product->img_product,
-                        'count_cart' => $count_add,
-                    ];
-                }
-            }
-            $products = array_values($productsSession);
-            $session->set('productsSession', $productsSession);
+            return $this->redirect(['site/index']);
         }
-        return $this->render('cart', compact('products'));
     }
 
     private function UserCartInfo($userId)
@@ -485,7 +489,6 @@ class PageController extends Controller
             return $this->redirect(['page/cart']);
         $model = new DostavkaForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-//            $session['dostavka'] = $model->attribute;
             $session->set('dostavka', $model->attribute);
             $session->set('oplata', $model->oplata);
             return $this->redirect(['page/checkout']);
@@ -537,7 +540,6 @@ class PageController extends Controller
             }
             $session->remove('oplata');
             $session->remove('dostavka');
-            $session->remove('productsSession');
             $session->remove('order_city');
             $session->remove('order_address');
             $session->remove('order_region');
@@ -581,14 +583,7 @@ class PageController extends Controller
     {
         $productId = Yii::$app->request->get('id');
         $action = Yii::$app->request->get('action');
-        if (Yii::$app->user->isGuest) {
-            $session = Yii::$app->session;
-            $session->open();
-            $products_array = $session->get('productsSession');
-            if ($productId !== null && $action !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT)) {
-
-            }
-        } else {
+        if (!Yii::$app->user->isGuest) {
             $userId = Yii::$app->user->id;
             if ($productId !== null && $action !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT)) {
                 $wish = Wishlist::findOne(['id_user' => $userId]);
@@ -603,7 +598,7 @@ class PageController extends Controller
                     ->one();
                 if ($action == 'add' && !isset($exists_item)) {
                     $specWish = new SpecWishlist();
-                    $specWish->id_wishlist = $wish;
+                    $specWish->id_wishlist = $wish->id_wishlist;
                     $specWish->id_product = $productId;
                     $specWish->save();
                 } else if ($action == 'del' && isset($exists_item)) {
@@ -611,13 +606,14 @@ class PageController extends Controller
                     $item->delete();
                 }
             }
-        }
 
-        $products_array = $this->UserWishInfo($userId);
-        $title = 'Умный дом | Поиск';
-        $count_products = count($products_array);
-        return $this->render('listwishes', compact('products_array',
-            'count_products', 'title', 'action'));
+            $products_array = $this->UserWishInfo($userId);
+            $title = 'Умный дом | Поиск';
+            $count_products = count($products_array);
+            return $this->render('listwishes', compact('products_array',
+                'count_products', 'title', 'action'));
+        }
+        return $this->redirect(['site/index']);
     }
 
     private
@@ -646,5 +642,172 @@ class PageController extends Controller
             }
         }
         return $products;
+    }
+
+    public function actionAdmin()
+    {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+            $categories = Categories::find()->asArray()->all();
+            return $this->render('admin', compact('categories'));
+        } else {
+            return $this->goHome();
+        }
+    }
+
+    public function actionAdmin_listproducts()
+    {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+            if (isset($_GET['id']) && $_GET['id'] != "" && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+                $id = $_GET['id'];
+                $categories = Categories::find()->where(['id' => $id])->asArray()->one();
+                if (count($categories) > 0) {
+                    $model = new SortForm();
+
+                    $page = 1; // номер страницы
+                    $str = -1; // сортировка
+                    $number = 12; // количество товаров на странице
+
+                    if (isset($_GET['page']) && $_GET['page'] != "" && filter_var($_GET['page'], FILTER_VALIDATE_INT)) {
+                        $page = $_GET['page'];
+                    }
+                    if (isset($_GET['str'])) {
+                        $str = $_GET['str'];
+                    }
+                    if (isset($_GET['number']) && $_GET['number'] != "" && filter_var($_GET['number'], FILTER_VALIDATE_INT)) {
+                        $number = $_GET['number'];
+                    }
+
+                    // Обработчик для формы сортировки
+                    if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                        if (isset($model->number) && !empty($model->number)) {
+                            $number = $model->number;
+                        }
+                        if (isset($model->str)) {
+                            $str = $model->str;
+                        }
+                    }
+                    switch ($str) {
+                        case 0:
+                            $products_array = $this->selectListProd($id, ['price' => SORT_ASC], $number,
+                                $page, null, null);
+                            break;
+                        case 1:
+                            $products_array = $this->selectListProd($id, ['price' => SORT_DESC], $number,
+                                $page, null, null);
+                            break;
+                        case 2:
+                            $products_array = $this->selectListProd($id, ['name_product' => SORT_ASC], $number,
+                                $page, null, null);
+                            break;
+                        case 3:
+                            $products_array = $this->selectListProd($id, ['name_product' => SORT_DESC], $number,
+                                $page, null, null);
+                            break;
+                        default:
+                            $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page,
+                                null, null);
+                            break;
+                    }
+                    $count_products = count(Products::findAll(['id_category' => $id]));
+                    $count_pages = ceil($count_products / $number);
+
+                    if (isset($_GET['view']) && $_GET['view'] == 1)
+                        $view = 1;
+                    else
+                        $view = 0;
+
+                    return $this->render('admin_listproducts', compact('categories', 'products_array',
+                        'model', 'count_pages', 'id', 'number', 'str'));
+                }
+            }
+            return $this->redirect(['page/catalog']);
+        } else {
+            return $this->goHome();
+        }
+    }
+
+    public function actionAddcategory()
+    {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+            $model = new AddCategoryForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                if (isset($_GET['id'])) {
+                    $update = Categories::findOne($_GET['id']);
+                } else {
+                    $update = new Categories();
+                }
+                $update->name_category = $model->name;
+                $update->img_category = $model->img;
+                $update->description_category = $model->description;
+                $update->save();
+                return $this->redirect(['page/admin']);
+            }
+            if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+                $category = Categories::find()->where(['id' => $_GET['id']])->asArray()->one();
+                return $this->render('addcategory', compact('category', 'model'));
+            } else {
+                return $this->render('addcategory', compact('model'));
+            }
+        } else {
+            return $this->goHome();
+        }
+    }
+
+    public function actionAddproduct()
+    {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+            $model = new AddProductForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                if (isset($_GET['id'])) {
+                    $update = Products::findOne($_GET['id']);
+                } else {
+                    $update = new Products();
+                }
+                $update->name_product = $model->name_product;
+                $update->price = $model->price;
+                $update->price_old = $model->price_old;
+                $update->description = $model->description;
+                $update->count = $model->count;
+                $update->code = $model->code;
+                $update->id_category = $model->id_category;
+                $update->img_product = $model->img_product;
+                $update->save();
+                return $this->redirect(['page/admin_listproducts', 'id' => $update->id_category]);
+            }
+            $cats = Categories::find()->select(['id', 'name_category'])->asArray()->all();
+            $categories = [];
+            foreach ($cats as $category) {
+                $categories[$category['id']] = $category['name_category'];
+            }
+            if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+                $product = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
+                return $this->render('addproduct', compact('product', 'model', 'categories'));
+            } else {
+                return $this->render('addproduct', compact('model', 'categories'));
+            }
+        } else {
+            return $this->goHome();
+        }
+    }
+
+    public function actionDeletecategory()
+    {
+        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+            $category = Categories::findOne($_GET['id']);
+            $category->delete();
+        }
+        return $this->redirect(['page/admin']);
+    }
+
+    public function actionDeleteproduct()
+    {
+        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+            $product = Products::findOne($_GET['id']);
+            $product->delete();
+            SpecCart::deleteAll(['id_product'=>$_GET['id']]);
+            Reviews::deleteAll(['id_product'=>$_GET['id']]);
+            Wishlist::deleteAll(['id_product'=>$_GET['id']]);
+        }
+        return $this->redirect(['page/admin_listproducts', 'id' => $_GET['category_id']]);
     }
 }

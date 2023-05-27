@@ -20,6 +20,8 @@ $this->title = "Личный кабинет";
     <tr>
         <td class="lk_table"><a href="<?= Url::toRoute('page/listorder') ?>" class="lk_buttons">Заказы</a></td>
         <td class="lk_table"><a href="<?= Url::toRoute('page/listwishes') ?>" class="lk_buttons">Список желаний</a></td>
-        <td class="lk_table"><a href="<?= Url::toRoute('page/listreviews') ?>" class="lk_buttons">Оставленные отзывы</a></td>
+        <?php if (Yii::$app->user->identity->login_user == "admin"):?>
+        <td class="lk_table"><a href="<?= Url::toRoute('page/admin'); ?>" class="lk_buttons">Панель администратора</a></td>
+        <?php endif;?>
     </tr>
 </table>

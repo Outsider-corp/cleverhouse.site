@@ -2,14 +2,16 @@
 *{
 	font-family: 'Roboto', sans-serif;
 }
+body{
+	background: url("../images/Фон.png") no-repeat 50% 0;
+	background-size: 125% auto;
+}
 header{
 	display: block;
 	width:100%;
-	background: url("../images/Фон.png") no-repeat 50% 0;
-	background-size: contain;
 	overflow: hidden;
     position: relative;
-    height: 700px;
+    height: 400px;
 }
 .header_top{
 	margin:50px 0 40px;
@@ -93,9 +95,6 @@ header{
 	display: inline-block;
 	margin-top:5px;
 }
-.menu_top{
-	/*margin-bottom:150px;*/
-}
 .menu_top li a{
 	color: #fff;
     display: block;
@@ -133,7 +132,7 @@ header{
 	height:7px;
 }
 .ban_block_wrap{
-	margin-top:-100px;
+	margin-top:-50px;
 }
 .ban_block h2{
 	font-size:40px;
@@ -200,6 +199,7 @@ header{
 .tabs_block_main .nav-tabs{
 	text-align: center;
 	border:0px;
+
 }
 .tabs_block_main .nav-tabs li{
 	float:none;
@@ -553,7 +553,7 @@ a.disabled:hover{
 	    background-color: #ff5b23;
 	}
 	.ban_block img {
-	    width: 100%;
+	    width: 180%;
 	}
 	.ban_block p {
 	    margin: 20px 0;
@@ -603,7 +603,7 @@ a.disabled:hover{
 		display: none;
 	}
 	header {
-	    height: 500px;
+	    height: 250px;
 	}
 	.footer_menu {
 	    display: block;

@@ -970,6 +970,22 @@ a.disabled:hover{
 	text-decoration: none;
 	opacity: 0.8;
 }
+.admin{
+	text-decoration: none;
+	text-align: center;
+	background-color: #151515;
+	position: relative;
+	display: block;
+	padding:10px 0;
+	color:#fff;
+	z-index: 1;
+	width: 250px;
+}
+.admin:hover{
+	text-decoration: none;
+	opacity: 0.8;
+	color:#fff;
+}
 .view_list .product{
 	overflow: hidden;
 	margin-bottom: 20px;
@@ -1048,8 +1064,10 @@ a.disabled:hover{
 		margin-top:30px;
 		border:0px;
 	}
-
 	.catalog a:last-child{
+		width: 350px;
+	}
+	.admin{
 		width: 350px;
 	}
 	.catalog .catalog_category img{
@@ -1079,6 +1097,9 @@ a.disabled:hover{
 	.catalog a:last-child{
 		width: 150px;
 	}
+	.admin{
+		width: 150px;
+	}
 	.catalog .catalog_category img{
 		height: 150px;
 		width: 150px;
@@ -1086,6 +1107,10 @@ a.disabled:hover{
 }
 @media all and (max-width: 768px){
 	.catalog a:last-child{
+		width: 400px;
+		margin: auto;
+	}
+	.admin{
 		width: 400px;
 		margin: auto;
 	}

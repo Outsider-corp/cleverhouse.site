@@ -60,14 +60,14 @@ $this->title = 'Умный дом';
                                                 <a class="cart disabled"><i
                                                             class="glyphicon glyphicon-shopping-cart disabled"></i></a>
                                             <?php else: ?>
-                                                <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array_small['id']]); ?>"
+                                                <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array_small[$i]['id']]); ?>"
                                                    class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
                                             <?php endif;
                                             if ($product_array_small[$i]['wishlist'] > 0):?>
-                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array_small['id'], 'action' => 'del']); ?>"
+                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array_small[$i]['id'], 'action' => 'del']); ?>"
                                                    class="mylist">Уже в списке желаний</a>
                                             <?php else: ?>
-                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array_small['id'], 'action' => 'add']); ?>"
+                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array_small[$i]['id'], 'action' => 'add']); ?>"
                                                    class="mylist">В список желаний</a>
                                             <?php endif; ?>
                                         </div>
@@ -75,7 +75,7 @@ $this->title = 'Умный дом';
                                 </div>
                             </div>
                         </div>
-                    <?php }; ?>
+                    <?php } ?>
                 </div>
                 <div class="tab-pane fade" id="tab2">
                     <?php for ($x = 0; $x <= 2; $x++) {
@@ -112,14 +112,14 @@ $this->title = 'Умный дом';
                                                 <a class="cart disabled"><i
                                                             class="glyphicon glyphicon-shopping-cart disabled"></i></a>
                                             <?php else: ?>
-                                                <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>"
+                                                <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array[$i]['id']]); ?>"
                                                    class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
                                             <?php endif;
                                             if ($product_array[$i]['wishlist'] > 0):?>
-                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'del']); ?>"
+                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array[$i]['id'], 'action' => 'del']); ?>"
                                                    class="mylist">Уже в списке желаний</a>
                                             <?php else: ?>
-                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'add']); ?>"
+                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array[$i]['id'], 'action' => 'add']); ?>"
                                                    class="mylist">В список желаний</a>
                                             <?php endif; ?>
                                         </div>
@@ -127,12 +127,16 @@ $this->title = 'Умный дом';
                                 </div>
                             </div>
                         </div>
-                    <?php }; ?>
+                    <?php } ?>
                 </div>
                 <div class="tab-pane fade" id="tab3">
-                    <?php for ($x = 0; $x <= 2; $x++) {
+                    <?php $n = 0;
+                    for ($x = 0; $x <= count($product_array); $x++) {
+                        if ($n > 2) break;
                         if (count($product_array) - 1 - $x >= 0):
                             $i = count($product_array) - 1 - $x;
+                            if (!isset($product_array[$i]['price_old'])) continue;
+                            $n++;
                         else:
                             break;
                         endif;
@@ -164,14 +168,14 @@ $this->title = 'Умный дом';
                                                 <a class="cart disabled"><i
                                                             class="glyphicon glyphicon-shopping-cart disabled"></i></a>
                                             <?php else: ?>
-                                                <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>"
+                                                <a href="<?= Url::toRoute(['page/cart', 'id' => $product_array[$i]['id']]); ?>"
                                                    class="cart"><i class="glyphicon glyphicon-shopping-cart"></i></a>
                                             <?php endif;
                                             if ($product_array[$i]['wishlist'] > 0):?>
-                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'del']); ?>"
+                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array[$i]['id'], 'action' => 'del']); ?>"
                                                    class="mylist">Уже в списке желаний</a>
                                             <?php else: ?>
-                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'add']); ?>"
+                                                <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array[$i]['id'], 'action' => 'add']); ?>"
                                                    class="mylist">В список желаний</a>
                                             <?php endif; ?>
                                         </div>
@@ -179,7 +183,7 @@ $this->title = 'Умный дом';
                                 </div>
                             </div>
                         </div>
-                    <?php }; ?>
+                    <?php } ?>
                 </div>
             </div>
         </div>

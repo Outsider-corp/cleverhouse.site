@@ -17,24 +17,7 @@ class CartWidget extends Widget
     {
         parent::init();
 
-        if (Yii::$app->user->isGuest) {
-            $session = Yii::$app->session;
-//        $session->destroy();
-            $session->open();
-
-            if ($session->has('productsSession')) {
-                $productsSession = $session->get('productsSession');
-
-
-                if (isset($productsSession) && is_array($productsSession) && count($productsSession) > 0) {
-                    $this->count = count($productsSession);
-                } else {
-                    $this->count = 0;
-                }
-            } else {
-                $this->count = 0;
-            }
-        } else {
+        if (!Yii::$app->user->isGuest) {
             $userId = Yii::$app->user->id;
             $productCount = SpecCart::find()
                 ->joinWith('cart')

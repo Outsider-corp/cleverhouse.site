@@ -135,15 +135,6 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    public function actionAdmin()
-    {
-        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin'){
-            return $this->render('admin');
-        }
-        else{
-            return $this->goHome();
-        }
-    }
 
     /**
      * Displays contact page.

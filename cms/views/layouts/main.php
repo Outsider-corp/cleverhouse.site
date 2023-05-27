@@ -59,9 +59,11 @@ AppAsset::register($this);
                             <?= Html::endForm(); ?>
                         </div>
                     </div>
-                    <div class="cart_top">
-                        <?php echo \app\components\CartWidget::widget(); ?>
-                    </div>
+                    <?php if (!Yii::$app->user->isGuest): ?>
+                        <div class="cart_top">
+                            <?php echo \app\components\CartWidget::widget(); ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -82,7 +84,6 @@ AppAsset::register($this);
                         'items' => [
                             ['label' => 'Главная', 'url' => ['/site/index']],
                             ['label' => 'Каталог', 'url' => ['/page/catalog']],
-                            ['label' => 'Новости', 'url' => ['/page/news']],
                             ['label' => 'Контакты', 'url' => ['/page/contacts']],
                         ],
                     ]);
@@ -97,24 +98,13 @@ AppAsset::register($this);
 
     <div class="container ban_block_wrap">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ban_block ban1">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ban_block ban1">
                 <div>
-                    <img src="images/ban1.jpg">
-                    <a href="#">
-                        <h2>Снаряжение для туризма</h2>
-                        <p>Широкий выбор уристического снаряжения</p>
-                        <span>Подробнее</span>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ban_block">
-                <div>
-                    <img src="images/ban2.jpg">
-                    <a href="#">
-                        <h2>Снаряжение для альпинистов</h2>
-                        <p>Качественное снаряжение для альпинизма от мировых брендов</p>
-                        <span>Подробнее</span>
-                    </a>
+                    <img src="images/ban2.png">
+                    <a href="<?= Url::toRoute(['page/catalog'])?>">
+                        <h2>Добро пожаловать в интернет-магазин "Умный дом"!</h2>
+                        <p>Широкий выбор умной техники</p>
+                        <span>Подробнее</span></a>
                 </div>
             </div>
         </div>
@@ -155,7 +145,6 @@ AppAsset::register($this);
                             <li><a href="<?= Url::toRoute('page/dostavka_info'); ?>">Доставка</a></li>
                             <li><a href="<?= Url::toRoute('page/oplata_info'); ?>">Оплата</a></li>
                             <li><a href="<?= Url::toRoute('page/about'); ?>">О компании</a></li>
-                            <li><a href="<?= Url::toRoute('page/sale'); ?>">Скидки</a></li>
                         </ul>
                     </div>
                     <div class="footer_menu">
@@ -167,7 +156,7 @@ AppAsset::register($this);
                                 <li><a href="<?= Url::toRoute('page/listorder'); ?>">Мои заказы</a></li>
                                 <li><a href="<?= Url::toRoute('page/listwishes'); ?>">Список желаний</a></li>
                                 <?php if (Yii::$app->user->identity->login_user === 'admin'): ?>
-                                    <li><a href="<?= Url::toRoute('site/admin'); ?>">Панель администратора</a></li>
+                                    <li><a href="<?= Url::toRoute('page/admin'); ?>">Панель администратора</a></li>
                                 <?php endif; endif; ?>
                         </ul>
                     </div>
