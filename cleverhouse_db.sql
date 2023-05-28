@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3307
--- Время создания: Май 28 2023 г., 01:13
+-- Время создания: Май 29 2023 г., 00:39
 -- Версия сервера: 8.0.30
 -- Версия PHP: 7.4.30
 
@@ -74,7 +74,8 @@ CREATE TABLE `characteristics` (
 --
 
 INSERT INTO `characteristics` (`id_сharacteristic`, `name_сharacteristic`, `description_сharacteristic`, `id_product`) VALUES
-(1, 'Яркость', '5000K', 1);
+(1, 'Яркость', '5000K', 1),
+(2, 'Производитель', 'Huawei', 1);
 
 -- --------------------------------------------------------
 
@@ -186,14 +187,6 @@ CREATE TABLE `users` (
   `password_user` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
---
--- Дамп данных таблицы `users`
---
-
-INSERT INTO `users` (`id_user`, `name_user`, `telephone_user`, `email_user`, `region_user`, `city_user`, `login_user`, `password_user`) VALUES
-(1, 'Admin', '', 'admin@admin.ru', '', '', 'admin', '$2y$13$RZsp0wVDuafpBCJcQ0pFwODgfuw82UyS8bYL.yoFRecViXZSg.kFq'),
-(2, 'Out', '89157118659', 'romikfe@mail.ru', '', 'Санкт-Петербург', 'outsider', '$2y$13$7luiw.r.Kx2xqTwKV.DmRuJ5O3CO0Xi7T0UHKOm1PokyRi3rPEKQu');
-
 -- --------------------------------------------------------
 
 --
@@ -289,7 +282,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT для таблицы `characteristics`
 --
 ALTER TABLE `characteristics`
-  MODIFY `id_сharacteristic` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_сharacteristic` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `orders`
@@ -325,7 +318,7 @@ ALTER TABLE `spec_wishlist`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `wishlist`
