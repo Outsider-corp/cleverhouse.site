@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\AddCartForm;
 use app\models\AddCategoryForm;
 use app\models\AddCharacteristicForm;
 use app\models\AddProductForm;
@@ -321,13 +322,17 @@ class PageController extends Controller
                 }
             }
             $reviewModel->reset();
+            $model = new AddCartForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                return $this->render('cart', ['id'=>$id, 'count'=>$model->value]);
+            }
             $product_array['reviews'] = array_reverse(Reviews::find()->where(['id_product' => $id])->asArray()->all());
             foreach ($product_array['reviews'] as $key => $review) {
                 $product_array['reviews'][$key]['name_user'] = User::findOne($review['id_user'])->name_user;
             }
         }
 
-        return $this->render('product', compact('product_array', 'id', 'reviewModel'));
+        return $this->render('product', compact('product_array', 'id', 'reviewModel', 'model'));
     }
 
     public
@@ -410,8 +415,6 @@ class PageController extends Controller
             }
             if (isset($product) and isset($count_add)) {
                 $specCart = SpecCart::findOne(['id_cart' => $cart->id_cart, 'id_product' => $productId]);
-                echo $specCart['id_product'];
-                echo 123;
                 if (!isset($specCart)) {
                     $specCart = new SpecCart();
                     $specCart->id_cart = $cart->id_cart;

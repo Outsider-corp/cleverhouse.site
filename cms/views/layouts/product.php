@@ -185,44 +185,9 @@ ProdAsset::register($this);
 </div>
 
 
-<?php
-/*
-NavBar::begin([
-    'brandLabel' => 'My Company',
-    'brandUrl' => Yii::$app->homeUrl,
-    'options' => [
-        'class' => 'navbar-inverse navbar-fixed-top',
-    ],
-]);
-echo Nav::widget([
-    'options' => ['class' => 'navbar-nav navbar-right'],
-    'items' => [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
-        Yii::$app->user->isGuest ? (
-            ['label' => 'Login', 'url' => ['/site/login']]
-        ) : (
-            '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>'
-        )
-    ],
-]);
-NavBar::end();
-*/
-?>
-
 <?= Breadcrumbs::widget([
     'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
 ]) ?>
-<? //= $content ?>
-
 
 <?php $this->endBody() ?>
 
@@ -236,7 +201,7 @@ NavBar::end();
     var count_prod = Number($(".count_prod").text());
 
 
-    jQuery(".form_count_prod .plus").on("click", function () {
+    jQuery(".plus").on("click", function () {
         if (input_text < count_prod) {
             input_text = input_text + 1;
             $(".input_text").val(input_text);
@@ -244,7 +209,7 @@ NavBar::end();
 
     })
 
-    jQuery(".form_count_prod .minus").on("click", function () {
+    jQuery(".minus").on("click", function () {
         if (input_text > 1) {
             input_text = input_text - 1;
             $(".input_text").val(input_text);

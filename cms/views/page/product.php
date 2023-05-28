@@ -47,16 +47,35 @@ $this->title = 'Карточка товара';
     <?php
     endif;
     $class = "";
+    $count = 1;
     if (!Yii::$app->user->isGuest):
     if ($product_array['count'] > 0):
     ?>
     <p>Количество:</p>
-    <form class="form_count_prod">
-        <input type="text" name="" value="1" class="input_text">
-        <button type="button" class="minus">-</button>
-        <button type="button" class="plus">+</button>
-    </form>
-    <div><a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id']]); ?>" class="add_cart_prod"><i
+    <?php
+    $form = ActiveForm::begin(['action' => ['page/product', 'id' => $product_array['id']]]);
+
+    // Поле ввода
+    echo $form->field($model, 'value')->textInput(['class' => 'input_text', 'value' => 1])->label(false);?>
+
+    <button type="button" class="minus">-</button>
+    <button type="button" class="plus">+</button>
+<!--    --><?// echo Html::submitButton('<a class="add_cart_prod">
+//<i class="glyphicon glyphicon-shopping-cart add_cart_prod"></i> В корзину</a>',
+//        ['name' => 'submit']); ?>
+
+    <?= Html::a('<i class="glyphicon glyphicon-shopping-cart"></i>В корзину',
+        '#', ['class' => 'add_cart_prod', 'onclick' => '$("#form").yiiActiveForm("validate", true);
+             if ($("#form").yiiActiveForm("validated")) $("#form").submit(); return false;']); ?>
+    <?php // Закрытие формы
+    ActiveForm::end(); ?>
+<!--    <form class="form_count_prod">-->
+<!--        <input type="text" name="" value="1" class="input_text">-->
+<!--        <button type="button" class="minus">-</button>-->
+<!--        <button type="button" class="plus">+</button>-->
+<!--    </form>-->
+    <div><a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id'], 'count' => $count]); ?>"
+            class="add_cart_prod"><i
                     class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
         <?php else: ?>
             <p>Нет в наличии</p>
@@ -76,16 +95,16 @@ $this->title = 'Карточка товара';
 
 <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
     <div class="h_prod">
-        <?php if(count($product_array['chars'])):?>
-        <h3>Характеристики:</h3>
-        <? endif;?>
+        <?php if (count($product_array['chars'])): ?>
+            <h3>Характеристики:</h3>
+        <? endif; ?>
         <table class="table table-striped table-bordered">
-            <?php foreach ($product_array['chars'] as $char):?>
-            <tr>
-                <td><?=$char['name_сharacteristic'];?></td>
-                <td><?=$char['description_сharacteristic'];?></td>
-            </tr>
-            <?php endforeach;?>
+            <?php foreach ($product_array['chars'] as $char): ?>
+                <tr>
+                    <td><?= $char['name_сharacteristic']; ?></td>
+                    <td><?= $char['description_сharacteristic']; ?></td>
+                </tr>
+            <?php endforeach; ?>
         </table>
 
     </div>
@@ -122,13 +141,13 @@ $this->title = 'Карточка товара';
                     <div class="reviews_contant">
                         <p class="reviews_title"><?= $review['name_user']; ?> <span><?= $review['date']; ?></span></p>
                         <div class="reviews_rating">
-                            <?php if (isset($review['rating'])):?>
-                            <?php for ($i = 0; $i < $review['rating']; $i++) { ?>
-                                <i class="glyphicon glyphicon-star active"></i>
-                            <?php }
-                            for ($i = 0; $i < 5 - $review['rating']; $i++) { ?>
-                                <i class="glyphicon glyphicon-star no_active"></i>
-                            <?php } endif; ?>
+                            <?php if (isset($review['rating'])): ?>
+                                <?php for ($i = 0; $i < $review['rating']; $i++) { ?>
+                                    <i class="glyphicon glyphicon-star active"></i>
+                                <?php }
+                                for ($i = 0; $i < 5 - $review['rating']; $i++) { ?>
+                                    <i class="glyphicon glyphicon-star no_active"></i>
+                                <?php } endif; ?>
                         </div>
                         <p class="reviews_text"><?= $review['text_review']; ?></p>
                     </div>
