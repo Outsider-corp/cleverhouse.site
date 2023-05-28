@@ -52,7 +52,7 @@ $this->title = "Панель администратора | " . $categories['nam
 
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="product">
-                <a href="<?= Url::toRoute(['page/product', 'id' => $product_array['id']]); ?>"
+                <a href="<?= Url::toRoute(['page/admin_product', 'id' => $product_array['id']]); ?>"
                    class="product_img">
                     <?php if ($product_array['price_old'] != ""): ?>
                         <span>-<?php echo 100 - intval($product_array['price'] * 100 / $product_array['price_old']); ?>%</span>
@@ -60,7 +60,7 @@ $this->title = "Панель администратора | " . $categories['nam
                     <img src="images/<?= $product_array['img_product']; ?>">
                 </a>
                 <div class="desc">
-                    <a href="<?= Url::toRoute(['page/product', 'id' => $product_array['id']]); ?>"
+                    <a href="<?= Url::toRoute(['page/admin_product', 'id' => $product_array['id']]); ?>"
                        class="product_title"><?= $product_array['name_product']; ?></a>
                     <div class="product_price">
                                 <span class="price"><?=
@@ -74,6 +74,8 @@ $this->title = "Панель администратора | " . $categories['nam
                     <div class="product_btn">
                         <a href="<?= Url::toRoute(['page/addproduct', 'id' => $product_array['id']]);
                         ?>" class="mylist">Изменить</a>
+                        <a href="<?= Url::toRoute(['page/addcharacteristic', 'product' => $product_array['id']]);
+                        ?>" class="mylist">Добавить атрибут</a>
                     </div>
                 </div>
             </div>

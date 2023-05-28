@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\AddCategoryForm;
+use app\models\AddCharacteristicForm;
 use app\models\AddProductForm;
 use app\models\Cart;
 use app\models\Characteristics;
@@ -496,9 +497,6 @@ class PageController extends Controller
         return $this->render('dostavka', compact('model'));
     }
 
-    /**
-     * Для страницы Оплата
-     */
     public
     function actionCheckout()
     {
@@ -726,88 +724,142 @@ class PageController extends Controller
         }
     }
 
-    public function actionAddcategory()
+    public function actionAdmin_product()
     {
         if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
-            $model = new AddCategoryForm();
-            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-                if (isset($_GET['id'])) {
-                    $update = Categories::findOne($_GET['id']);
-                } else {
-                    $update = new Categories();
-                }
-                $update->name_category = $model->name;
-                $update->img_category = $model->img;
-                $update->description_category = $model->description;
-                $update->save();
-                return $this->redirect(['page/admin']);
-            }
-            if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-                $category = Categories::find()->where(['id' => $_GET['id']])->asArray()->one();
-                return $this->render('addcategory', compact('category', 'model'));
+            if (isset($_GET['id']) && !empty($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+                $id = $_GET['id'];
             } else {
-                return $this->render('addcategory', compact('model'));
+                throw new NotAcceptableHttpException;
             }
-        } else {
-            return $this->goHome();
-        }
-    }
+            $product_array = Products::find()->where(['id' => $id])->asArray()->one();
+            if (!is_array($product_array) || count($product_array) < 0) {
+                throw new NotAcceptableHttpException;
+            }
+            $product_array['chars'] = Characteristics::find()->where(['id_product' => $product_array['id']])->asArray()->all();
 
-    public function actionAddproduct()
-    {
-        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
-            $model = new AddProductForm();
-            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-                if (isset($_GET['id'])) {
-                    $update = Products::findOne($_GET['id']);
-                } else {
-                    $update = new Products();
-                }
-                $update->name_product = $model->name_product;
-                $update->price = $model->price;
-                $update->price_old = $model->price_old;
-                $update->description = $model->description;
-                $update->count = $model->count;
-                $update->code = $model->code;
-                $update->id_category = $model->id_category;
-                $update->img_product = $model->img_product;
-                $update->save();
-                return $this->redirect(['page/admin_listproducts', 'id' => $update->id_category]);
-            }
-            $cats = Categories::find()->select(['id', 'name_category'])->asArray()->all();
-            $categories = [];
-            foreach ($cats as $category) {
-                $categories[$category['id']] = $category['name_category'];
-            }
-            if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-                $product = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
-                return $this->render('addproduct', compact('product', 'model', 'categories'));
+            return $this->render('admin_product', compact('id', 'product_array'));
+    }
+return $this->goHome();
+}
+
+public
+function actionAddcategory()
+{
+    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+        $model = new AddCategoryForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (isset($_GET['id'])) {
+                $update = Categories::findOne($_GET['id']);
             } else {
-                return $this->render('addproduct', compact('model', 'categories'));
+                $update = new Categories();
             }
+            $update->name_category = $model->name;
+            $update->img_category = $model->img;
+            $update->description_category = $model->description;
+            $update->save();
+            return $this->redirect(['page/admin']);
+        }
+        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+            $category = Categories::find()->where(['id' => $_GET['id']])->asArray()->one();
+            return $this->render('addcategory', compact('category', 'model'));
         } else {
-            return $this->goHome();
+            return $this->render('addcategory', compact('model'));
         }
+    } else {
+        return $this->goHome();
+    }
+}
+
+public
+function actionAddproduct()
+{
+    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+        $model = new AddProductForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (isset($_GET['id'])) {
+                $update = Products::findOne($_GET['id']);
+            } else {
+                $update = new Products();
+            }
+            $update->name_product = $model->name_product;
+            $update->price = $model->price;
+            $update->price_old = $model->price_old;
+            $update->description = $model->description;
+            $update->count = $model->count;
+            $update->code = $model->code;
+            $update->id_category = $model->id_category;
+            $update->img_product = $model->img_product;
+            $update->save();
+            return $this->redirect(['page/admin_listproducts', 'id' => $update->id_category]);
+        }
+        $cats = Categories::find()->select(['id', 'name_category'])->asArray()->all();
+        $categories = [];
+        foreach ($cats as $category) {
+            $categories[$category['id']] = $category['name_category'];
+        }
+        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+            $product = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
+            return $this->render('addproduct', compact('product', 'model', 'categories'));
+        } else {
+            return $this->render('addproduct', compact('model', 'categories'));
+        }
+    } else {
+        return $this->goHome();
+    }
+}
+
+public function actionAddcharacteristic(){
+    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+        $model = new AddCharacteristicForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && isset($_GET['product'])) {
+            if (isset($_GET['id'])) {
+                $update = Characteristics::findOne($_GET['id']);
+            } else {
+                $update = new Characteristics();
+            }
+            $update->name_сharacteristic = $model->name;
+            $update->description_сharacteristic = $model->description;
+            $update->id_product = $_GET['product'];
+            $update->save();
+            return $this->redirect(['page/admin_product', 'id' => $update->id_product]);
+        } else {
+            return $this->render('addcharacteristic', ['model'=>$model, 'product'=>$_GET['product']]);
+        }
+    } else {
+        return $this->goHome();
+    }
+}
+public
+function actionDeletecategory()
+{
+    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+        $category = Categories::findOne($_GET['id']);
+        $category->delete();
+    }
+    return $this->redirect(['page/admin']);
+}
+    public
+    function actionDeletecharacteristic()
+    {
+        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)
+        && isset($_GET['product']) && filter_var($_GET['product'], FILTER_VALIDATE_INT)) {
+            $char = Characteristics::findOne($_GET['id']);
+            $char->delete();
+        }
+        return $this->redirect(['page/admin_product']);
     }
 
-    public function actionDeletecategory()
-    {
-        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-            $category = Categories::findOne($_GET['id']);
-            $category->delete();
-        }
-        return $this->redirect(['page/admin']);
+public
+function actionDeleteproduct()
+{
+    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+        $product = Products::findOne($_GET['id']);
+        $product->delete();
+        SpecCart::deleteAll(['id_product' => $_GET['id']]);
+        Reviews::deleteAll(['id_product' => $_GET['id']]);
+        Wishlist::deleteAll(['id_product' => $_GET['id']]);
     }
-
-    public function actionDeleteproduct()
-    {
-        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-            $product = Products::findOne($_GET['id']);
-            $product->delete();
-            SpecCart::deleteAll(['id_product'=>$_GET['id']]);
-            Reviews::deleteAll(['id_product'=>$_GET['id']]);
-            Wishlist::deleteAll(['id_product'=>$_GET['id']]);
-        }
-        return $this->redirect(['page/admin_listproducts', 'id' => $_GET['category_id']]);
-    }
+    return $this->redirect(['page/admin_listproducts', 'id' => $_GET['category_id']]);
+}
 }
