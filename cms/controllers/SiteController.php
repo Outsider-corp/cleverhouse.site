@@ -73,8 +73,11 @@ class SiteController extends Controller
             $userId = Yii::$app->user->id;
             $wish = Wishlist::findOne(['id_user'=>$userId]);
             foreach ($product_array as $key=>$product) {
+                if (isset($wish))
                 $product_array[$key]['wishlist'] = SpecWishlist::find()
                     ->where(['id_wishlist'=>$wish->id_wishlist, 'id_product'=>$product['id']])->count();
+                else
+                    $product_array[$key]['wishlist'] = 0;
             }}
 
         return $this->render('index', compact('product_array'));

@@ -25,7 +25,7 @@ $session->open();
             if (isset($session['dostavka'])): ?>
                 <li><span><a href="<?= Url::toRoute('page/checkout') ?>"> 4. Подтверждение</a></span></li>
             <?php else: ?>
-                <li><span>4. Подтверждение</span></li>
+                <li><span>4. Проверка</span></li>
             <?php endif; ?>
         </ul>
     </div>

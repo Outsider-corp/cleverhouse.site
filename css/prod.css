@@ -368,7 +368,7 @@ header{
     border: 1px solid #e0e0e0;
 }
 .order_prod input.input_text{
-	width: 50px;
+	width: 75px;
 	text-align:center;
 }
 .price_prod {
@@ -401,6 +401,13 @@ header{
 	position: relative;
 	top:4px;
 	margin-right: 5px;
+}
+.form-cart{
+	height: 100%;
+}
+.form-row{
+	display: flex;
+	margin-bottom: 10px;
 }
 .h_prod h3, .r_prod h3{
 	font-size:18px;

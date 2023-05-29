@@ -7,6 +7,7 @@ use app\models\AddCategoryForm;
 use app\models\AddCharacteristicForm;
 use app\models\AddProductForm;
 use app\models\Cart;
+use app\models\ChangeCartForm;
 use app\models\Characteristics;
 use app\models\ContactForm;
 use app\models\AddressForm;
@@ -119,8 +120,11 @@ class PageController extends Controller
                 $userId = Yii::$app->user->id;
                 $wish = Wishlist::findOne(['id_user' => $userId]);
                 foreach ($products_array as $key => $product) {
-                    $products_array[$key]['wishlist'] = SpecWishlist::find()
-                        ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product['id']])->count();
+                    if (isset($wish))
+                        $products_array[$key]['wishlist'] = SpecWishlist::find()
+                            ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product['id']])->count();
+                    else
+                        $products_array[$key]['wishlist'] = 0;
                 }
             }
             foreach ($products_array as $key => $product) {
@@ -264,8 +268,11 @@ class PageController extends Controller
                     $userId = Yii::$app->user->id;
                     $wish = Wishlist::findOne(['id_user' => $userId]);
                     foreach ($products_array as $key => $product) {
-                        $products_array[$key]['wishlist'] = SpecWishlist::find()
-                            ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product['id']])->count();
+                        if (isset($wish))
+                            $products_array[$key]['wishlist'] = SpecWishlist::find()
+                                ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product['id']])->count();
+                        else
+                            $products_array[$key]['wishlist'] = 0;
                     }
                 }
                 foreach ($products_array as $key => $product) {
@@ -298,7 +305,10 @@ class PageController extends Controller
         } else {
             throw new NotAcceptableHttpException;
         }
-
+        $model = new AddCartForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            return $this->redirect(['cart', 'id' => $id, 'count' => $model->value]);
+        }
         $product_array = Products::find()->where(['id' => $id])->asArray()->one();
         if (!is_array($product_array) || count($product_array) < 0) {
             throw new NotAcceptableHttpException;
@@ -306,9 +316,13 @@ class PageController extends Controller
         $product_array['chars'] = Characteristics::find()->where(['id_product' => $product_array['id']])->asArray()->all();
         if (!Yii::$app->user->isGuest) {
             $wish = Wishlist::findOne(['id_user' => Yii::$app->user->id]);
-            $product_array['wishlist'] = SpecWishlist::find()
-                ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product_array['id']])
-                ->count();
+            if (isset($wish))
+                $product_array['wishlist'] = SpecWishlist::find()
+                    ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $product_array['id']])
+                    ->asArray()
+                    ->count();
+            else
+                $product_array['wishlist'] = 0;
             $reviewModel = new ReviewForm();
             if ($reviewModel->load(Yii::$app->request->post()) && $reviewModel->validate()) {
                 if ($reviewModel->text != "") {
@@ -322,16 +336,14 @@ class PageController extends Controller
                 }
             }
             $reviewModel->reset();
-            $model = new AddCartForm();
-            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-                return $this->render('cart', ['id'=>$id, 'count'=>$model->value]);
-            }
-            $product_array['reviews'] = array_reverse(Reviews::find()->where(['id_product' => $id])->asArray()->all());
-            foreach ($product_array['reviews'] as $key => $review) {
-                $product_array['reviews'][$key]['name_user'] = User::findOne($review['id_user'])->name_user;
-            }
+        } else {
+            $reviewModel = 0;
+            $model = 0;
         }
-
+        $product_array['reviews'] = array_reverse(Reviews::find()->where(['id_product' => $id])->asArray()->all());
+        foreach ($product_array['reviews'] as $key => $review) {
+            $product_array['reviews'][$key]['name_user'] = User::findOne($review['id_user'])->name_user;
+        }
         return $this->render('product', compact('product_array', 'id', 'reviewModel', 'model'));
     }
 
@@ -396,16 +408,11 @@ class PageController extends Controller
     function actionCart()
     {
         if (!Yii::$app->user->isGuest) {
-            $products = [];
-            $productId = Yii::$app->request->get('id');
-            if ($productId !== null && $productId > 0 && filter_var($productId, FILTER_VALIDATE_INT))
-                $product = Products::findOne($productId);
-            $count_add = Yii::$app->request->get('count');
-            if ($count_add === null || !filter_var($count_add, FILTER_VALIDATE_INT)) {
-                $count_add = 1;
-            } else if ($count_add > $product['count']) {
-                $count_add = null;
+            $model = new ChangeCartForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()){
+
             }
+            $products = [];
             $userId = Yii::$app->user->id;
             $cart = Cart::findOne(['id_user' => $userId]);
             if (!isset($cart)) {
@@ -413,22 +420,31 @@ class PageController extends Controller
                 $cart->id_user = $userId;
                 $cart->save();
             }
-            if (isset($product) and isset($count_add)) {
+            if (isset($_GET['id']) && $_GET['id'] > 0 && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+                $productId = $_GET['id'];
+                $product = Products::findOne($productId);
+                if (isset($_GET['count']) && filter_var($_GET['count'], FILTER_VALIDATE_INT))
+                    $count_add = $_GET['count'];
+                else
+                    $count_add = 1;
+                if ($count_add > $product['count'])
+                    $count_add = $product['count'];
                 $specCart = SpecCart::findOne(['id_cart' => $cart->id_cart, 'id_product' => $productId]);
                 if (!isset($specCart)) {
                     $specCart = new SpecCart();
                     $specCart->id_cart = $cart->id_cart;
                     $specCart->id_product = $productId;
                     $specCart->count = $count_add;
-                    $specCart->save();
                 } else {
                     if ($product['count'] > $specCart->count + $count_add)
                         $specCart->count += $count_add;
+                    else
+                        $specCart->count = $product['count'];
                 }
                 $specCart->save();
             }
             $products = $this->UserCartInfo($userId);
-            return $this->render('cart', compact('products'));
+            return $this->render('cart', compact('products', 'model'));
         } else {
             return $this->redirect(['site/index']);
         }
@@ -448,9 +464,11 @@ class PageController extends Controller
             $count = $item['count'];
             $product = Products::findOne($productId);
             $wish = Wishlist::findOne(['id_user' => $userId]);
-            $wish_chk = SpecWishlist::find()
-                ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $productId])
-                ->count();
+            if (isset($wish))
+                $wish_chk = SpecWishlist::find()
+                    ->where(['id_wishlist' => $wish->id_wishlist, 'id_product' => $productId])->count();
+            else
+                $wish_chk = 0;
             if ($product !== null) {
                 $products[] = [
                     'id' => $productId,
@@ -621,11 +639,13 @@ class PageController extends Controller
     function UserWishInfo($userId)
     {
         $wish = Wishlist::findOne(['id_user' => $userId]);
-        $specWishItems = SpecWishlist::find()
-            ->select(['id_product'])
-            ->where(['id_wishlist' => $wish->id_wishlist])
-            ->asArray()
-            ->all();
+        if (isset($wish))
+            $specWishItems = SpecWishlist::find()
+                ->where(['id_wishlist' => $wish->id_wishlist])
+                ->asArray()
+                ->all();
+        else
+            $specWishItems = [];
         $products = [];
         foreach ($specWishItems as $item) {
             $productId = $item['id_product'];
@@ -742,127 +762,130 @@ class PageController extends Controller
             $product_array['chars'] = Characteristics::find()->where(['id_product' => $product_array['id']])->asArray()->all();
 
             return $this->render('admin_product', compact('id', 'product_array'));
-    }
-return $this->goHome();
-}
-
-public
-function actionAddcategory()
-{
-    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
-        $model = new AddCategoryForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if (isset($_GET['id'])) {
-                $update = Categories::findOne($_GET['id']);
-            } else {
-                $update = new Categories();
-            }
-            $update->name_category = $model->name;
-            $update->img_category = $model->img;
-            $update->description_category = $model->description;
-            $update->save();
-            return $this->redirect(['page/admin']);
         }
+        return $this->goHome();
+    }
+
+    public
+    function actionAddcategory()
+    {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+            $model = new AddCategoryForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                if (isset($_GET['id'])) {
+                    $update = Categories::findOne($_GET['id']);
+                } else {
+                    $update = new Categories();
+                }
+                $update->name_category = $model->name;
+                $update->img_category = $model->img;
+                $update->description_category = $model->description;
+                $update->save();
+                return $this->redirect(['page/admin']);
+            }
+            if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+                $category = Categories::find()->where(['id' => $_GET['id']])->asArray()->one();
+                return $this->render('addcategory', compact('category', 'model'));
+            } else {
+                return $this->render('addcategory', compact('model'));
+            }
+        } else {
+            return $this->goHome();
+        }
+    }
+
+    public
+    function actionAddproduct()
+    {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+            $model = new AddProductForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                if (isset($_GET['id'])) {
+                    $update = Products::findOne($_GET['id']);
+                } else {
+                    $update = new Products();
+                }
+                $update->name_product = $model->name_product;
+                $update->price = $model->price;
+                $update->price_old = $model->price_old;
+                $update->description = $model->description;
+                $update->count = $model->count;
+                $update->code = $model->code;
+                $update->id_category = $model->id_category;
+                $update->img_product = $model->img_product;
+                $update->save();
+                return $this->redirect(['page/admin_listproducts', 'id' => $update->id_category]);
+            }
+            $cats = Categories::find()->select(['id', 'name_category'])->asArray()->all();
+            $categories = [];
+            foreach ($cats as $category) {
+                $categories[$category['id']] = $category['name_category'];
+            }
+            if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+                $product = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
+                return $this->render('addproduct', compact('product', 'model', 'categories'));
+            } else {
+                return $this->render('addproduct', compact('model', 'categories'));
+            }
+        } else {
+            return $this->goHome();
+        }
+    }
+
+    public function actionAddcharacteristic()
+    {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
+            $model = new AddCharacteristicForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate() && isset($_GET['product'])) {
+                if (isset($_GET['id'])) {
+                    $update = Characteristics::findOne($_GET['id']);
+                } else {
+                    $update = new Characteristics();
+                }
+                $update->name_сharacteristic = $model->name;
+                $update->description_сharacteristic = $model->description;
+                $update->id_product = $_GET['product'];
+                $update->save();
+                return $this->redirect(['page/admin_product', 'id' => $update->id_product]);
+            } else {
+                return $this->render('addcharacteristic', ['model' => $model, 'product' => $_GET['product']]);
+            }
+        } else {
+            return $this->goHome();
+        }
+    }
+
+    public
+    function actionDeletecategory()
+    {
         if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-            $category = Categories::find()->where(['id' => $_GET['id']])->asArray()->one();
-            return $this->render('addcategory', compact('category', 'model'));
-        } else {
-            return $this->render('addcategory', compact('model'));
+            $category = Categories::findOne($_GET['id']);
+            $category->delete();
         }
-    } else {
-        return $this->goHome();
+        return $this->redirect(['page/admin']);
     }
-}
 
-public
-function actionAddproduct()
-{
-    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
-        $model = new AddProductForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if (isset($_GET['id'])) {
-                $update = Products::findOne($_GET['id']);
-            } else {
-                $update = new Products();
-            }
-            $update->name_product = $model->name_product;
-            $update->price = $model->price;
-            $update->price_old = $model->price_old;
-            $update->description = $model->description;
-            $update->count = $model->count;
-            $update->code = $model->code;
-            $update->id_category = $model->id_category;
-            $update->img_product = $model->img_product;
-            $update->save();
-            return $this->redirect(['page/admin_listproducts', 'id' => $update->id_category]);
-        }
-        $cats = Categories::find()->select(['id', 'name_category'])->asArray()->all();
-        $categories = [];
-        foreach ($cats as $category) {
-            $categories[$category['id']] = $category['name_category'];
-        }
-        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-            $product = Products::find()->where(['id' => $_GET['id']])->asArray()->one();
-            return $this->render('addproduct', compact('product', 'model', 'categories'));
-        } else {
-            return $this->render('addproduct', compact('model', 'categories'));
-        }
-    } else {
-        return $this->goHome();
-    }
-}
-
-public function actionAddcharacteristic(){
-    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->login_user === 'admin') {
-        $model = new AddCharacteristicForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && isset($_GET['product'])) {
-            if (isset($_GET['id'])) {
-                $update = Characteristics::findOne($_GET['id']);
-            } else {
-                $update = new Characteristics();
-            }
-            $update->name_сharacteristic = $model->name;
-            $update->description_сharacteristic = $model->description;
-            $update->id_product = $_GET['product'];
-            $update->save();
-            return $this->redirect(['page/admin_product', 'id' => $update->id_product]);
-        } else {
-            return $this->render('addcharacteristic', ['model'=>$model, 'product'=>$_GET['product']]);
-        }
-    } else {
-        return $this->goHome();
-    }
-}
-public
-function actionDeletecategory()
-{
-    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-        $category = Categories::findOne($_GET['id']);
-        $category->delete();
-    }
-    return $this->redirect(['page/admin']);
-}
     public
     function actionDeletecharacteristic()
     {
         if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)
-        && isset($_GET['product']) && filter_var($_GET['product'], FILTER_VALIDATE_INT)) {
+            && isset($_GET['product']) && filter_var($_GET['product'], FILTER_VALIDATE_INT)) {
             $char = Characteristics::findOne($_GET['id']);
             $char->delete();
         }
         return $this->redirect(['page/admin_product']);
     }
 
-public
-function actionDeleteproduct()
-{
-    if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-        $product = Products::findOne($_GET['id']);
-        $product->delete();
-        SpecCart::deleteAll(['id_product' => $_GET['id']]);
-        Reviews::deleteAll(['id_product' => $_GET['id']]);
-        Wishlist::deleteAll(['id_product' => $_GET['id']]);
+    public
+    function actionDeleteproduct()
+    {
+        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+            $product = Products::findOne($_GET['id']);
+            $product->delete();
+            SpecCart::deleteAll(['id_product' => $_GET['id']]);
+            Reviews::deleteAll(['id_product' => $_GET['id']]);
+            Wishlist::deleteAll(['id_product' => $_GET['id']]);
+        }
+        return $this->redirect(['page/admin_listproducts', 'id' => $_GET['category_id']]);
     }
-    return $this->redirect(['page/admin_listproducts', 'id' => $_GET['category_id']]);
-}
 }

@@ -47,57 +47,42 @@ $this->title = 'Карточка товара';
     <?php
     endif;
     $class = "";
-    $count = 1;
-    if (!Yii::$app->user->isGuest):
-    if ($product_array['count'] > 0):
-    ?>
-    <p>Количество:</p>
-    <?php
-    $form = ActiveForm::begin(['action' => ['page/product', 'id' => $product_array['id']]]);
-
-    // Поле ввода
-    echo $form->field($model, 'value')->textInput(['class' => 'input_text', 'value' => 1])->label(false);?>
-
-    <button type="button" class="minus">-</button>
-    <button type="button" class="plus">+</button>
-<!--    --><?// echo Html::submitButton('<a class="add_cart_prod">
-//<i class="glyphicon glyphicon-shopping-cart add_cart_prod"></i> В корзину</a>',
-//        ['name' => 'submit']); ?>
-
-    <?= Html::a('<i class="glyphicon glyphicon-shopping-cart"></i>В корзину',
-        '#', ['class' => 'add_cart_prod', 'onclick' => '$("#form").yiiActiveForm("validate", true);
-             if ($("#form").yiiActiveForm("validated")) $("#form").submit(); return false;']); ?>
-    <?php // Закрытие формы
-    ActiveForm::end(); ?>
-<!--    <form class="form_count_prod">-->
-<!--        <input type="text" name="" value="1" class="input_text">-->
-<!--        <button type="button" class="minus">-</button>-->
-<!--        <button type="button" class="plus">+</button>-->
-<!--    </form>-->
-    <div><a href="<?= Url::toRoute(['page/cart', 'id' => $product_array['id'], 'count' => $count]); ?>"
-            class="add_cart_prod"><i
-                    class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
+    if (!Yii::$app->user->isGuest) {
+        if ($product_array['count'] > 0):
+            ?>
+            <p>Количество:</p>
+            <?php
+            $form1 = ActiveForm::begin(['id' => 'form1']); ?>
+            <div class="form-row">
+                <?= $form1->field($model, 'value')->textInput(['type' => 'number', 'class' => 'input_text', 'value' => 1])->label(false); ?>
+                <button type="button" class="minus form-cart">-</button>
+                <button type="button" class="plus form-cart">+</button>
+            </div>
+            <?= Html::a('<i class="glyphicon glyphicon-shopping-cart"></i>В корзину',
+            '#', ['class' => 'add_cart_prod', 'onclick' => '$("#form1").yiiActiveForm("validate", true);
+                 if ($("#form1").yiiActiveForm("validated")) $("#form1").submit(); return false;']); ?>
+            <?php
+            ActiveForm::end(); ?>
         <?php else: ?>
             <p>Нет в наличии</p>
             <a class="add_cart_prod disabled"><i class="glyphicon glyphicon-shopping-cart"></i> В корзину</a>
-        <?php
-        endif;
-        if ($product_array['wishlist'] > 0):?>
+        <?php endif;
+        if ($product_array['wishlist'] > 0) {
+            ?>
             <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'del']); ?>"
                class="mylist">Уже в списке желаний</a>
-        <?php else: ?>
+        <?php } else { ?>
             <a href="<?= Url::toRoute(['page/listwishes', 'id' => $product_array['id'], 'action' => 'add']); ?>"
                class="mylist">В список желаний</a>
-        <?php endif;
-        endif; ?>
-    </div>
+        <?php }
+    } ?>
 </div>
 
 <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
     <div class="h_prod">
         <?php if (count($product_array['chars'])): ?>
             <h3>Характеристики:</h3>
-        <? endif; ?>
+        <?php endif; ?>
         <table class="table table-striped table-bordered">
             <?php foreach ($product_array['chars'] as $char): ?>
                 <tr>
@@ -147,7 +132,8 @@ $this->title = 'Карточка товара';
                                 <?php }
                                 for ($i = 0; $i < 5 - $review['rating']; $i++) { ?>
                                     <i class="glyphicon glyphicon-star no_active"></i>
-                                <?php } endif; ?>
+                                <?php }
+                            endif; ?>
                         </div>
                         <p class="reviews_text"><?= $review['text_review']; ?></p>
                     </div>

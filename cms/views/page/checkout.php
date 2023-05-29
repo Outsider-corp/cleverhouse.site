@@ -17,7 +17,7 @@ $session->open();
         <li><span><a href="<?= Url::toRoute('page/cart') ?>"> 1. Заказ</a></span></li>
         <li><span><a href="<?= Url::toRoute('page/address') ?>"> 2. Адрес</a></span></li>
         <li><span><a href="<?= Url::toRoute('page/dostavka') ?>"> 3. Доставка</a></span></li>
-        <li class="active"><span>4. Подтверждение</span></li>
+        <li class="active"><span>4. Проверка</span></li>
     </ul>
 </div>
 

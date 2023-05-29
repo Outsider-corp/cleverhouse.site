@@ -619,13 +619,18 @@ a.disabled:hover{
 	border: none;
 	cursor: pointer;
 }
-
+.product_cart_link{
+	text-decoration: none;
+	color: #0f0f0f;
+}
 .radio-list {
 	display: flex;
 	flex-direction: column;
 	font-size: 18px;
 }
-
+.form-cart{
+	height: 100%;
+}
 .radio-list .radio {
 	display: flex;
 	align-items: center;
