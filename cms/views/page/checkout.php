@@ -40,7 +40,8 @@ $session->open();
         <td class="value_cart">Кол-во</td>
         <td class="rez_price_cart">Стоимость</td>
     </tr>
-    <?php $i = 0; ?>
+    <?php $i = 0;
+    $sum = 0;?>
     <?php foreach ($products as $value): ?>
         <tr class="cart_prod_content">
             <td class="title_cart"><?php echo $value['name_product']; ?></td>

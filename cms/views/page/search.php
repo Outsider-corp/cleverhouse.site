@@ -16,7 +16,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
 
 <div class="col-lg-3 col-md-3 col-sm-5 col-xs-12 filter">
     <h3>Фильтры</h3>
-    <?php $form = ActiveForm::begin(['action' => ['page/search', 'view' => $view, 'search_text' => $search_text]]); ?>
+    <?php if (!isset($search_text)) $search_text = "";
+    $form = ActiveForm::begin(['action' => ['page/search', 'view' => $view, 'search_text' => $search_text]]); ?>
     <div class="form-group">
         <label class="control-label">Цена / руб</label>
         <div class="input-group">

@@ -92,7 +92,7 @@ class PageController extends Controller
                         $value[] = $descriptions[$index];
                     }
                 }
-            if (count($categories) > 0) {
+            if (isset($categories) && count($categories) > 0) {
                 $model = new SortForm();
 
                 $page = 1; // номер страницы
@@ -140,7 +140,6 @@ class PageController extends Controller
                             $price_from, $price_to, $filter_value, $value);
                         break;
                 }
-            }
             if (!Yii::$app->user->isGuest) {
                 $userId = Yii::$app->user->id;
                 $wish = Wishlist::findOne(['id_user' => $userId]);
@@ -169,7 +168,7 @@ class PageController extends Controller
             return $this->render('listproducts', compact('categories', 'products_array',
                 'count_products', 'view', 'model', 'count_pages', 'id', 'number', 'str', 'filterModel', 'price_from',
                 'price_to', 'filter_value', 'descriptions'));
-        }
+        }}
         return $this->redirect(['page/catalog']);
     }
 
@@ -889,7 +888,12 @@ class PageController extends Controller
                 $update->save();
                 return $this->redirect(['page/admin_product', 'id' => $update->id_product]);
             } else {
-                return $this->render('addcharacteristic', ['model' => $model, 'product' => $_GET['product']]);
+                if (isset($_GET['id'])) {
+                    $char = Characteristics::find()->where(['id_сharacteristic'=>$_GET['id']])->asArray()->one();
+                    return $this->render('addcharacteristic', ['model' => $model, 'product' => $_GET['product'],
+                        'char'=>$char]);}else{
+                    return $this->render('addcharacteristic', ['model' => $model, 'product' => $_GET['product']]);
+                }
             }
         } else {
             return $this->goHome();

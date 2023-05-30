@@ -54,7 +54,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 sortirovka_and_number_prod">
 
                     <?php $form = ActiveForm::begin(['action' => ['page/listproducts', 'id' => $categories['id'], 'view' => $view,
-                        'price_from' => $price_from, 'price_to' => $price_to, 'value' => $value]]); ?>
+                        'price_from' => $price_from, 'price_to' => $price_to]]); ?>
                     <p><strong>Сортировка по:</strong><?= $form->field($model, 'str')->dropDownList([
                             '0' => 'Цене, по возрастанию',
                             '1' => 'Цене, по убыванию',
