@@ -32,6 +32,7 @@ use app\models\Categories;
 use app\models\Products;
 use yii\web\NotAcceptableHttpException;
 use yii\helpers\Url;
+use yii\db\Query;
 
 /*Контроллер для страниц сайта*/
 
@@ -55,7 +56,7 @@ class PageController extends Controller
                 $price_to = $_GET['price_to'];
             else
                 $price_to = Products::find()->where(['id_category' => $id])->max('price');
-            $value = 0;
+            $indexes = [];
             if ($filterModel->load(Yii::$app->request->post()) && $filterModel->validate()) {
                 if (isset($filterModel->price_from) && !empty($filterModel->price_from)) {
                     $price_from = $filterModel->price_from;
@@ -63,10 +64,34 @@ class PageController extends Controller
                 if (isset($filterModel->price_to) && !empty($filterModel->price_to) && $filterModel->price_to != 0) {
                     $price_to = $filterModel->price_to;
                 }
-                if (isset($filterModel->value) && !empty($filterModel->value)) {
-                    $value = $filterModel->value;
-                }
+                if (is_array($filterModel->values))
+                    $indexes = $filterModel->values;
             }
+            try {
+                $filter_value = (new Query())
+                    ->select('name_сharacteristic')
+                    ->from('characteristics')
+                    ->where(['id_product' => (new Query())->select('id')->from('products')->where(['id_category' => $id])])
+                    ->groupBy('name_сharacteristic')
+                    ->orderBy(['COUNT(*)' => SORT_DESC])
+                    ->limit(1)->scalar();
+                $descriptions = (new Query())
+                    ->select('description_сharacteristic')
+                    ->from('characteristics')
+                    ->where(['id_product' => (new Query())->select('id')->from('products')->where(['id_category' => $id])])
+                    ->andWhere(['name_сharacteristic' => $filter_value])->distinct()
+                    ->column();
+            } catch (\Exception $e) {
+                $filter_value = null;
+                $descriptions = null;
+            }
+            $value = [];
+            if (count($indexes) != 0)
+                foreach ($indexes as $index) {
+                    if (isset($descriptions[$index])) {
+                        $value[] = $descriptions[$index];
+                    }
+                }
             if (count($categories) > 0) {
                 $model = new SortForm();
 
@@ -96,23 +121,23 @@ class PageController extends Controller
                 switch ($str) {
                     case 0:
                         $products_array = $this->selectListProd($id, ['price' => SORT_ASC], $number,
-                            $page, $price_from, $price_to);
+                            $page, $price_from, $price_to, $filter_value, $value);
                         break;
                     case 1:
                         $products_array = $this->selectListProd($id, ['price' => SORT_DESC], $number,
-                            $page, $price_from, $price_to);
+                            $page, $price_from, $price_to, $filter_value, $value);
                         break;
                     case 2:
                         $products_array = $this->selectListProd($id, ['name_product' => SORT_ASC], $number,
-                            $page, $price_from, $price_to);
+                            $page, $price_from, $price_to, $filter_value, $value);
                         break;
                     case 3:
                         $products_array = $this->selectListProd($id, ['name_product' => SORT_DESC], $number,
-                            $page, $price_from, $price_to);
+                            $page, $price_from, $price_to, $filter_value, $value);
                         break;
                     default:
                         $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page,
-                            $price_from, $price_to);
+                            $price_from, $price_to, $filter_value, $value);
                         break;
                 }
             }
@@ -143,37 +168,41 @@ class PageController extends Controller
 
             return $this->render('listproducts', compact('categories', 'products_array',
                 'count_products', 'view', 'model', 'count_pages', 'id', 'number', 'str', 'filterModel', 'price_from',
-                'price_to', 'value'));
+                'price_to', 'filter_value', 'descriptions'));
         }
         return $this->redirect(['page/catalog']);
     }
 
     private
-    function selectListProd($id, $field_sort, $limit, $start, $price_from, $price_to)
+    function selectListProd($id, $field_sort, $limit, $start, $price_from, $price_to, $filter_name, $value)
     {
         if ($start == 1)
             $start = 0;
         else
             $start = ($start - 1) * $limit;
-        if (isset($price_from) && isset($price_to)):
+        if (count($value) != 0) {
+            return Products::find()->where(['id_category' => $id])->joinWith('characteristics')
+                ->andWhere(['name_сharacteristic' => $filter_name])
+                ->andWhere(['description_сharacteristic' => $value])
+                ->asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
+        }
+        if (isset($price_from) && isset($price_to)) {
             return Products::find()->where(['id_category' => $id])->
             andWhere(['>=', 'price', $price_from])->
             andWhere(['<=', 'price', $price_to])->
             asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
-        else:
-            return Products::find()->where(['id_category' => $id])->
-            asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
-        endif;
+        }
+        return Products::find()->where(['id_category' => $id])
+            ->asArray()->orderBy($field_sort)->limit($limit)->offset($start)->all();
     }
 
     private
-    function selectSearch($text, $field_sort, $limit, $start, $price_from, $price_to, $value)
+    function selectSearch($text, $field_sort, $limit, $start, $price_from, $price_to, $filter_name, $value)
     {
         if ($start == 1)
             $start = 0;
         else
             $start = ($start - 1) * $limit;
-
         return Products::find()->where(['like', 'name_product', '%' . $text . '%', false])->
         andWhere(['>=', 'price', $price_from])->
         andWhere(['<=', 'price', $price_to])->asArray()->
@@ -203,7 +232,6 @@ class PageController extends Controller
                 $price_to = $_GET['price_to'];
             else
                 $price_to = Products::find()->where(['like', 'name_product', '%' . $search_text . '%', false])->max('price');
-            $value = 0;
             if ($filterModel->load(Yii::$app->request->post()) && $filterModel->validate()) {
                 if (isset($filterModel->price_from) && !empty($filterModel->price_from)) {
                     $price_from = $filterModel->price_from;
@@ -211,11 +239,7 @@ class PageController extends Controller
                 if (isset($filterModel->price_to) && !empty($filterModel->price_to) && $filterModel->price_to != 0) {
                     $price_to = $filterModel->price_to;
                 }
-                if (isset($filterModel->value) && !empty($filterModel->value)) {
-                    $value = $filterModel->value;
-                }
             }
-
             $model = new SortForm();
             $products_array = Products::find()->where(['like', 'name_product', '%' . $search_text . '%', false])->all();
             $count_products = count($products_array);
@@ -245,23 +269,23 @@ class PageController extends Controller
                 switch ($str) {
                     case 0:
                         $products_array = $this->selectSearch($search_text, ['price' => SORT_ASC], $number, $page
-                            , $price_from, $price_to, $value);
+                            , $price_from, $price_to, null, null);
                         break;
                     case 1:
                         $products_array = $this->selectSearch($search_text, ['price' => SORT_DESC], $number, $page,
-                            $price_from, $price_to, $value);
+                            $price_from, $price_to, null, null);
                         break;
                     case 2:
                         $products_array = $this->selectSearch($search_text, ['name_product' => SORT_ASC], $number, $page,
-                            $price_from, $price_to, $value);
+                            $price_from, $price_to, null, null);
                         break;
                     case 3:
                         $products_array = $this->selectSearch($search_text, ['name_product' => SORT_DESC], $number, $page,
-                            $price_from, $price_to, $value);
+                            $price_from, $price_to, null, null);
                         break;
                     default:
                         $products_array = $this->selectSearch($search_text, ['id' => SORT_ASC], $number, $page,
-                            $price_from, $price_to, $value);
+                            $price_from, $price_to, null, null);
                         break;
                 }
                 if (!Yii::$app->user->isGuest) {
@@ -409,12 +433,28 @@ class PageController extends Controller
     {
         if (!Yii::$app->user->isGuest) {
             $model = new ChangeCartForm();
-            if ($model->load(Yii::$app->request->post()) && $model->validate()){
-
-            }
-            $products = [];
             $userId = Yii::$app->user->id;
             $cart = Cart::findOne(['id_user' => $userId]);
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $params = Yii::$app->request->post();
+                $products = $this->UserCartInfo($userId);
+                $values = $model->values;
+                foreach ($values as $key => $value) {
+                    $specCart = SpecCart::findOne(['id_cart' => $cart->id_cart, 'id_product' => $products[$key]['id']]);
+                    if ($value == 0)
+                        $specCart->delete();
+                    else {
+                        $specCart->count = $value;
+                        $specCart->save();
+                    }
+                }
+                $sumVals = array_sum($values);
+                if ($params["submit-button"] == "next" && $sumVals > 0)
+                    return $this->redirect(['page/address']);
+                else if ($params["submit-button"] == "back")
+                    return $this->redirect(['site/index']);
+            }
+            $products = [];
             if (!isset($cart)) {
                 $cart = new Cart();
                 $cart->id_user = $userId;
@@ -444,6 +484,7 @@ class PageController extends Controller
                 $specCart->save();
             }
             $products = $this->UserCartInfo($userId);
+            $this->view->registerJsVar('products', $products);
             return $this->render('cart', compact('products', 'model'));
         } else {
             return $this->redirect(['site/index']);
@@ -710,23 +751,23 @@ class PageController extends Controller
                     switch ($str) {
                         case 0:
                             $products_array = $this->selectListProd($id, ['price' => SORT_ASC], $number,
-                                $page, null, null);
+                                $page, null, null, null, []);
                             break;
                         case 1:
                             $products_array = $this->selectListProd($id, ['price' => SORT_DESC], $number,
-                                $page, null, null);
+                                $page, null, null, null, []);
                             break;
                         case 2:
                             $products_array = $this->selectListProd($id, ['name_product' => SORT_ASC], $number,
-                                $page, null, null);
+                                $page, null, null, null, []);
                             break;
                         case 3:
                             $products_array = $this->selectListProd($id, ['name_product' => SORT_DESC], $number,
-                                $page, null, null);
+                                $page, null, null, null, []);
                             break;
                         default:
                             $products_array = $this->selectListProd($id, ['id' => SORT_ASC], $number, $page,
-                                null, null);
+                                null, null, null, []);
                             break;
                     }
                     $count_products = count(Products::findAll(['id_category' => $id]));

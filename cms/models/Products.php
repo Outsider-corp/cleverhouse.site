@@ -9,4 +9,9 @@ class Products extends ActiveRecord
     {
         return 'products';
     }
+
+    public function getCharacteristics()
+    {
+        return $this->hasMany(Characteristics::class, ['id_product' => 'id']);
+    }
 }

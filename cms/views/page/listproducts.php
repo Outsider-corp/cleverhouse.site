@@ -24,7 +24,7 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
             <?= $form->field($filterModel, 'price_to')->textInput(['type' => 'text', 'class' => 'form-control', 'value' => $price_to])->label(false) ?>
         </div>
     </div>
-    <?= $form->field($filterModel, 'volume')->label('Объем / л')->checkboxList(['10' => '10', '20' => '20', '30' => '30']) ?>
+    <?= $form->field($filterModel, 'values')->checkboxList($descriptions)->label($filter_value); ?>
     <?= Html::submitButton('Подобрать', ['class' => 'btn btn-primary', 'name' => 'submit-button']) ?>
     <?php ActiveForm::end(); ?>
 </div>

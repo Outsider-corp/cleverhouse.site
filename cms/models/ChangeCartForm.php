@@ -5,7 +5,7 @@ use yii\base\Model;
 
 class ChangeCartForm extends Model
 {
-    public $values = [];
+    public $values = array();
 
     public function rules()
     {

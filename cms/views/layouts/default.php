@@ -11,14 +11,12 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\DefaultAsset;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
-use yii\web\Request;
 
 DefaultAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language?>">
+<html lang="<?= Yii::$app->language ?>">
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,15 +40,15 @@ DefaultAsset::register($this);
                                     class="glyphicon glyphicon-map-marker"></i>Обратная связь</a>
                         <?php if (!Yii::$app->user->isGuest): ?>
                             <a href="<?= Url::toRoute('page/lk'); ?>"><i class="glyphicon glyphicon-user"></i>Личный
-                                кабинет (<?=Yii::$app->user->identity['login_user'];?>)</a>
+                                кабинет (<?= Yii::$app->user->identity['login_user']; ?>)</a>
                             <a href="<?= Url::toRoute('site/logout'); ?>"><i
                                         class="glyphicon glyphicon-lock"></i>Выйти</a>
-                        <?php else:?>
+                        <?php else: ?>
                             <a href="<?= Url::toRoute('site/login'); ?>"><i
                                         class="glyphicon glyphicon-lock"></i>Войти</a>
                             <a href="<?= Url::toRoute('site/registration'); ?>"><i
                                         class="glyphicon glyphicon-lock"></i>Зарегистрироваться</a>
-                        <?php endif;?>
+                        <?php endif; ?>
                     </div>
                     <div class="search_top">
                         <!-- Форма с текстовым полем и кнопкой отправки -->
@@ -154,7 +152,7 @@ DefaultAsset::register($this);
                     <ul>
                         <li><a href="<?= Url::toRoute('site/login'); ?>">Войти</a></li>
                         <li><a href="<?= Url::toRoute('site/registration'); ?>">Зарегистрироваться</a></li>
-                        <?php if (!Yii::$app->user->isGuest):?>
+                        <?php if (!Yii::$app->user->isGuest): ?>
                             <li><a href="<?= Url::toRoute('page/listorder'); ?>">Мои заказы</a></li>
                             <li><a href="<?= Url::toRoute('page/listwishes'); ?>">Список желаний</a></li>
                             <?php if (Yii::$app->user->identity->login_user === 'admin'): ?>
@@ -180,46 +178,72 @@ DefaultAsset::register($this);
 </div>
 
 
-<?php
-/*
-NavBar::begin([
-    'brandLabel' => 'My Company',
-    'brandUrl' => Yii::$app->homeUrl,
-    'options' => [
-        'class' => 'navbar-inverse navbar-fixed-top',
-    ],
-]);
-echo Nav::widget([
-    'options' => ['class' => 'navbar-nav navbar-right'],
-    'items' => [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
-        Yii::$app->user->isGuest ? (
-            ['label' => 'Login', 'url' => ['/site/login']]
-        ) : (
-            '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>'
-        )
-    ],
-]);
-NavBar::end();
-*/
-?>
-
 <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ])?>
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+]) ?>
 <? //= $content ?>
 
 
 <?php $this->endBody() ?>
+
+
+<script>
+
+    function submitFormCart(button){
+        var form = $("#form1");
+        document.getElementById('submit-button').value = button;
+        form.yiiActiveForm("validate", true);
+        if (form.yiiActiveForm("validated"))
+            form.submit();
+    }
+    $(document).ready(function () {
+        function calcSum() {
+            var sum = 0;
+            var elements = document.querySelectorAll('[id^="rez-price-"]');
+            for (var i = 0; i < elements.length; i++) {
+                var element = elements[i];
+                var val = parseInt(element.textContent.replace(/\D/g, ''));
+                sum += val;
+            }
+            return sum;
+        }
+        // Обработчик нажатия кнопки "+"
+        $('.plus-cart-button').on('click', function () {
+            var index = $(this).data('index'); // Получение индекса кнопки
+            var input = $('#input-' + index); // Получение соответствующего поля ввода
+            var value = parseInt(input.val()); // Получение текущего значения поля ввода
+            if (value >= products[index]['count'])
+                return
+            input.val(value + 1); // Увеличение значения на 1
+            var price = parseInt($('#price-' + index).text().replace(/\D/g, ''));
+            var rez_price = $('#rez-price-' + index);
+            var add = price * (value + 1);
+            rez_price.text(add.toLocaleString() + " руб");
+            var rez_sum = $('#rez-sum');
+            var rez_val = calcSum();
+            rez_sum.text(rez_val.toLocaleString() + " руб");
+        });
+
+        // Обработчик нажатия кнопки "-"
+        $('.minus-cart-button').on('click', function () {
+            var index = $(this).data('index'); // Получение индекса кнопки
+            var input = $('#input-' + index); // Получение соответствующего поля ввода
+            var value = parseInt(input.val()); // Получение текущего значения поля ввода
+            if (value > 0) {
+                input.val(value - 1); // Уменьшение значения на 1, если оно больше нуля
+                var price = parseInt($('#price-' + index).text().replace(/\D/g, ''));
+                var rez_price = $('#rez-price-' + index);
+                var add = price * (value + 1);
+                rez_price.text((price * (value - 1)).toLocaleString() + " руб");
+                var rez_sum = $('#rez-sum');
+                var rez_val = calcSum();
+                rez_sum.text(rez_val.toLocaleString() + " руб");
+            }
+        });
+
+    });
+</script>
+
 </body>
 </html>
 <?php $this->endPage() ?>

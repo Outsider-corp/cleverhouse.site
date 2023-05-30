@@ -4,6 +4,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\helpers\Html;
 
+
 /* @var $this yii\web\View */
 
 $this->title = $title;
@@ -26,7 +27,6 @@ $this->registerMetaTag(['name' => 'description', 'content' => 'системы у
                 'value' => $price_to])->label(false) ?>
         </div>
     </div>
-    <?= $form->field($filterModel, 'volume')->label('Объем / л')->checkboxList(['10' => '10', '20' => '20', '30' => '30']) ?>
     <?= Html::submitButton('Подобрать', ['class' => 'btn btn-primary', 'name' => 'submit-button']) ?>
     <?php ActiveForm::end(); ?>
 </div>
